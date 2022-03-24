@@ -3,10 +3,10 @@ const express = require("express");
 const Router = express.Router();
 
 const movieRoutes = require("../modules/movie/movieRoutes");
-// const scheduleRoutes = require("../modules/schedule/scheduleRoutes");
+// const scheduleRoutes = require("../modules/schedule/schedulesRoutes")
 
-Router.use("/movie", movieRoutes); // localhost:3001/movie/hello
-// Router.use("/schedule", scheduleRoutes); //localhost:3001/schedule/hello
+Router.use("/movie", movieRoutes);
+// Router.use("/schedule", scheduleRoutes)
 
 // Router.get("/hello", (request, response) => {
 //   response.status(200);

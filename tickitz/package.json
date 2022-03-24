@@ -1,7 +1,6 @@
 {
   "name": "tickitz",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon ./src/index.js"
@@ -26,5 +25,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.0"
-  }
+  },
+  "description": ""
 }
