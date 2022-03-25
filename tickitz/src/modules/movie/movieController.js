@@ -138,7 +138,6 @@ module.exports = {
   deleteMovie: async (request, response) => {
     const { id } = request.params;
     const newId = parseInt(id);
-    console.log(typeof newId);
     try {
       const checkId = await movieModel.getMovieById(newId);
       if (checkId.length === 0)

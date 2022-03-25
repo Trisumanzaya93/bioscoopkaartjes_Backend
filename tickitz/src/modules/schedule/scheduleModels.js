@@ -30,7 +30,7 @@ module.exports = {
       );
     }),
 
-  getScheduleyId: (id) =>
+  getScheduleById: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
         "SELECT * FROM schedule WHERE id = ?",
