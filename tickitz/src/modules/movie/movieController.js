@@ -81,7 +81,7 @@ module.exports = {
         category,
         synopsis,
       };
-      const result = await movieModel.createMovie(setData);
+      const result = await movieModel.createMovie(request.body);
       return helperWrapper.response(
         response,
         200,
@@ -136,21 +136,24 @@ module.exports = {
     }
   },
   deleteMovie: async (request, response) => {
+    const { id } = request.params;
+    const newId = parseInt(id);
+    console.log(typeof newId);
     try {
+      const checkId = await movieModel.getMovieById(newId);
+      if (checkId.length === 0)
+        return helperWrapper.response(response, 404, "Movie not found !");
+
+      await movieModel.deleteMovie(newId);
       // 1. tangkap id
       // 2. proses pengecekan apakah id berada di dalam database
       // 3. dengan query = DELETE FROM movie Whre id =?
       // 4. resolve (id)
       // 5. Set Response
       // yg diatas Buat sendiri
-      return helperWrapper.response(
-        response,
-        200,
-        "Success get data !",
-        "Hello World"
-      );
+      return helperWrapper.response(response, 200, "delete success !");
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(response, 400, "Bad Request", error);
     }
   },
 };
