@@ -4,23 +4,34 @@ const scheduleModel = require("./scheduleModels");
 module.exports = {
   getAllSchedule: async (request, response) => {
     try {
-      let { page, limit } = request.query;
-      page = Number(page); //1
-      limit = Number(limit); //3
-      const offset = page * limit - limit; // 1*3-3=0
-      const totalData = await scheduleModel.getCountScedule();
+      const queryString = request.query;
+      const limit = parseInt(queryString.per_page);
+      const offset = parseInt(queryString.page * limit) - limit; // 1*3-3=0
+
+      const result = await scheduleModel.getAllSchedule({
+        ...queryString,
+        limit,
+        offset,
+      });
+      const totalData = await scheduleModel.getCountSchedule();
       const totalPage = Math.ceil(totalData / limit); //membulatkan ke atas: Math.ceil()
       const pageInfo = {
-        page,
+        offset,
         totalPage,
         limit,
         totalData,
+        page: parseInt(queryString.page),
       };
 
-      const result = await scheduleModel.getAllSchedule(limit, offset);
-      return helperWrapper.response(response, 200, "Success get data !");
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        result,
+        pageInfo
+      );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(response, 400, "Bad Request", null, error);
     }
   },
 
@@ -37,7 +48,12 @@ module.exports = {
           null
         );
       }
-      return helperWrapper.response(response, 200, "Success get data !");
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        result
+      );
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
@@ -55,10 +71,11 @@ module.exports = {
         dateStart,
         dateEnd,
       };
-      const result = await movieModel.createSchedule(request.body);
+      const result = await scheduleModel.createSchedule(request.body);
       return helperWrapper.response(response, 200, "Success create data !");
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      console.log(error);
+      return helperWrapper.response(response, 400, "Bad Request", error);
     }
   },
 
@@ -106,7 +123,7 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(response, 400, "Bad Request", null, error);
     }
   },
 

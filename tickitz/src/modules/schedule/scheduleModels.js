@@ -15,19 +15,50 @@ module.exports = {
       );
     }),
 
-  getAllSchedule: (limit, offset) =>
+  // getAllSchedule: (queryString) => new Promise((resolve, reject) => {
+  //   let sqlQuery = "SELECT * FROM schedule ";
+  //   let firstWhere = true;
+  //   if (queryString.search) {
+  //     sqlQuery += `${firstWhere ? "WHERE" : "AND"} (vehiclename like '%${
+  //       queryString.search
+  // }%' OR category like '%${queryString.search}%')`;
+  // firstWhere = false;
+  //  if (queryString.sort && queryString.sortBy) {
+  //    sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
+  //   }
+  //   sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+  //   db.query(sqlQuery, (error, result) => {
+  //     if (!error) {
+  //       resolve(result);
+  //     } else {
+  //       reject(error);
+  //     }
+  //   });
+  // }),
+
+  getAllSchedule: (queryString) =>
     new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT * FROM schedule LIMIT ? OFFSET ?",
-        [limit, offset],
-        (error, result) => {
-          if (!error) {
-            resolve(result);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
+      let sqlQuery = "SELECT * FROM schedule ";
+
+      let firstWhere = true;
+      if (queryString.search) {
+        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (location like '%${
+          queryString.search
+        }%' OR movieId like '%${queryString.search}%')`;
+        firstWhere = false;
+      }
+      if (queryString.sort && queryString.sortBy) {
+        sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
+      }
+      sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+
+      connection.query(sqlQuery, (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Error(error.sqlMessage));
         }
-      );
+      });
     }),
 
   getScheduleById: (id) =>

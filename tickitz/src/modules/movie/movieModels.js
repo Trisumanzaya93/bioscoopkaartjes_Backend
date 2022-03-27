@@ -15,19 +15,37 @@ module.exports = {
       );
     }),
 
-  getAllMovie: (limit, offset) =>
+  getAllMovie: (queryString) =>
     new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT * FROM movie LIMIT ? OFFSET ?",
-        [limit, offset],
-        (error, result) => {
-          if (!error) {
-            resolve(result);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
+      const query = {
+        search: queryString.search ?? " ",
+        sortBy: queryString.sortBy ?? "name",
+      };
+      console.log(query);
+      let sqlQuery =
+        "SELECT movie.*, schedule.id AS schedule_id, schedule.premiere, schedule.price, schedule.location, schedule.dateStart, schedule.dateEnd, schedule.time, schedule.createdAt FROM movie LEFT JOIN schedule ON schedule.movieId = movie.id ";
+
+      let firstWhere = true;
+      if (query.search) {
+        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name like '%${
+          query.search
+        }%' OR category like '%${query.search}%')`;
+        firstWhere = false;
+      }
+      if (query.sort && query.sortBy) {
+        sqlQuery += ` ORDER BY movie.${query.sortBy} ${query.sort}`;
+      }
+      sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+
+      console.log(sqlQuery);
+
+      connection.query(sqlQuery, (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Error(error.sqlMessage));
         }
-      );
+      });
     }),
   getMovieById: (id) =>
     new Promise((resolve, reject) => {

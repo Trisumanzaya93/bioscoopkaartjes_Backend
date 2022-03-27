@@ -18,20 +18,24 @@ module.exports = {
   },
   getAllMovie: async (request, response) => {
     try {
-      let { page, limit } = request.query;
-      page = Number(page); //1
-      limit = Number(limit); //3
-      const offset = page * limit - limit; // 1*3-3=0
+      const queryString = request.query;
+      const limit = parseInt(queryString.per_page ?? 2);
+      const offset = parseInt(queryString.page * limit) - limit; // 1*3-3=0
+
+      const result = await movieModel.getAllMovie({
+        ...queryString,
+        limit,
+        offset,
+      });
       const totalData = await movieModel.getCountMovie();
       const totalPage = Math.ceil(totalData / limit); //membulatkan ke atas: Math.ceil()
       const pageInfo = {
-        page,
+        offset,
         totalPage,
         limit,
         totalData,
+        page: parseInt(queryString.page),
       };
-
-      const result = await movieModel.getAllMovie(limit, offset);
 
       return helperWrapper.response(
         response,
@@ -41,6 +45,7 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -85,8 +90,8 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success create data !",
-        result
+        "Success create data !"
+        // result
       );
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -140,6 +145,7 @@ module.exports = {
     const newId = parseInt(id);
     try {
       const checkId = await movieModel.getMovieById(newId);
+
       if (checkId.length === 0)
         return helperWrapper.response(response, 404, "Movie not found !");
 
