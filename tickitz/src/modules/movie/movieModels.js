@@ -18,26 +18,22 @@ module.exports = {
   getAllMovie: (queryString) =>
     new Promise((resolve, reject) => {
       const query = {
-        search: queryString.search ?? " ",
+        search: queryString.search ?? "",
         sortBy: queryString.sortBy ?? "name",
       };
-      console.log(query);
-      let sqlQuery =
-        "SELECT movie.*, schedule.id AS schedule_id, schedule.premiere, schedule.price, schedule.location, schedule.dateStart, schedule.dateEnd, schedule.time, schedule.createdAt FROM movie LEFT JOIN schedule ON schedule.movieId = movie.id ";
+      let sqlQuery = "SELECT * FROM movie ";
 
       let firstWhere = true;
-      if (query.search) {
+      if (queryString.search) {
         sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name like '%${
-          query.search
-        }%' OR category like '%${query.search}%')`;
+          queryString.search
+        }%' OR category like '%${queryString.search}%')`;
         firstWhere = false;
       }
-      if (query.sort && query.sortBy) {
-        sqlQuery += ` ORDER BY movie.${query.sortBy} ${query.sort}`;
+      if (queryString.sort && queryString.sortBy) {
+        sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
       }
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
-
-      console.log(sqlQuery);
 
       connection.query(sqlQuery, (error, result) => {
         if (!error) {
@@ -47,6 +43,37 @@ module.exports = {
         }
       });
     }),
+
+  // getAllMovie: (queryString) =>
+  //   new Promise((resolve, reject) => {
+  //     const query = {
+  //       search: queryString.search ?? " ",
+  //       sortBy: queryString.sortBy ?? "name",
+  //     };
+  //     let sqlQuery =
+  //       "SELECT movie.*, schedule.id AS schedule_id, schedule.premiere, schedule.price, schedule.location, schedule.dateStart, schedule.dateEnd, schedule.time, schedule.createdAt FROM movie LEFT JOIN schedule ON schedule.movieId = movie.id ";
+
+  //     let firstWhere = true;
+  //     if (query.search) {
+  //       sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name like '%${
+  //         query.search
+  //       }%' OR category like '%${query.search}%')`;
+  //       firstWhere = false;
+  //     }
+  //     if (query.sort && query.sortBy) {
+  //       sqlQuery += ` ORDER BY movie.${query.sortBy} ${query.sort}`;
+  //     }
+  //     sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+
+  //     connection.query(sqlQuery, (error, result) => {
+  //       if (!error) {
+  //         resolve(result);
+  //       } else {
+  //         reject(new Error(error.sqlMessage));
+  //       }
+  //     });
+  //   }),
+
   getMovieById: (id) =>
     new Promise((resolve, reject) => {
       connection.query(

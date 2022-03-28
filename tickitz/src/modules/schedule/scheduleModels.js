@@ -15,42 +15,28 @@ module.exports = {
       );
     }),
 
-  // getAllSchedule: (queryString) => new Promise((resolve, reject) => {
-  //   let sqlQuery = "SELECT * FROM schedule ";
-  //   let firstWhere = true;
-  //   if (queryString.search) {
-  //     sqlQuery += `${firstWhere ? "WHERE" : "AND"} (vehiclename like '%${
-  //       queryString.search
-  // }%' OR category like '%${queryString.search}%')`;
-  // firstWhere = false;
-  //  if (queryString.sort && queryString.sortBy) {
-  //    sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
-  //   }
-  //   sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
-  //   db.query(sqlQuery, (error, result) => {
-  //     if (!error) {
-  //       resolve(result);
-  //     } else {
-  //       reject(error);
-  //     }
-  //   });
-  // }),
-
   getAllSchedule: (queryString) =>
     new Promise((resolve, reject) => {
-      let sqlQuery = "SELECT * FROM schedule ";
+      const query = {
+        search: queryString.search ?? "",
+        sortBy: queryString.sortBy ?? "name",
+      };
+      let sqlQuery =
+        "SELECT schedule.*, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director, movie.cast, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON movie.id = schedule.movieId";
 
       let firstWhere = true;
-      if (queryString.search) {
+      if (query.search) {
         sqlQuery += `${firstWhere ? "WHERE" : "AND"} (location like '%${
-          queryString.search
-        }%' OR movieId like '%${queryString.search}%')`;
+          query.search
+        }%' OR movieId like '%${query.search}%')`;
         firstWhere = false;
       }
-      if (queryString.sort && queryString.sortBy) {
-        sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
+      if (query.sort && query.sortBy) {
+        sqlQuery += ` ORDER BY ${query.sortBy} ${query.sort}`;
       }
+
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+      console.log(sqlQuery);
 
       connection.query(sqlQuery, (error, result) => {
         if (!error) {
@@ -60,6 +46,31 @@ module.exports = {
         }
       });
     }),
+
+  // getAllSchedule: (queryString) =>
+  //   new Promise((resolve, reject) => {
+  //     let sqlQuery = "SELECT * FROM schedule ";
+
+  //     let firstWhere = true;
+  //     if (queryString.search) {
+  //       sqlQuery += `${firstWhere ? "WHERE" : "AND"} (location like '%${
+  //         queryString.search
+  //       }%' OR movieId like '%${queryString.search}%')`;
+  //       firstWhere = false;
+  //     }
+  //     if (queryString.sort && queryString.sortBy) {
+  //       sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
+  //     }
+  //     sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
+
+  //     connection.query(sqlQuery, (error, result) => {
+  //       if (!error) {
+  //         resolve(result);
+  //       } else {
+  //         reject(new Error(error.sqlMessage));
+  //       }
+  //     });
+  //   }),
 
   getScheduleById: (id) =>
     new Promise((resolve, reject) => {

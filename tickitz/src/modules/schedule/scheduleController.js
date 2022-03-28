@@ -5,8 +5,8 @@ module.exports = {
   getAllSchedule: async (request, response) => {
     try {
       const queryString = request.query;
-      const limit = parseInt(queryString.per_page);
-      const offset = parseInt(queryString.page * limit) - limit; // 1*3-3=0
+      const limit = parseInt(queryString.per_page ?? 2);
+      const offset = parseInt((queryString.page ?? 1) * limit) - limit; // 1*3-3=0
 
       const result = await scheduleModel.getAllSchedule({
         ...queryString,
@@ -31,6 +31,7 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null, error);
     }
   },
