@@ -79,6 +79,7 @@ module.exports = {
       connection.query(
         "SELECT * FROM movie WHERE id = ?",
         id,
+      
         (error, result) => {
           if (!error) {
             resolve(result);
@@ -88,6 +89,7 @@ module.exports = {
         }
       );
     }),
+
   createMovie: (data) =>
     new Promise((resolve, reject) => {
       const query = connection.query(
@@ -107,6 +109,7 @@ module.exports = {
       );
       console.log(query.sql);
     }),
+
   updateMovie: (id, data) =>
     new Promise((resolve, reject) => {
       connection.query(

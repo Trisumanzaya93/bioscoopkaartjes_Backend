@@ -20,7 +20,7 @@ module.exports = {
     try {
       const queryString = request.query;
       const limit = parseInt(queryString.per_page ?? 2);
-      const offset = parseInt(queryString.page * limit) - limit; // 1*3-3=0
+      const offset = parseInt(queryString.page ?? 1 * limit) - limit; // 1*3-3=0
 
       const result = await movieModel.getAllMovie({
         ...queryString,

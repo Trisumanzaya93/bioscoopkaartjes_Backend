@@ -34,7 +34,6 @@ module.exports = {
       if (query.sort && query.sortBy) {
         sqlQuery += ` ORDER BY ${query.sortBy} ${query.sort}`;
       }
-
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
       console.log(sqlQuery);
 
