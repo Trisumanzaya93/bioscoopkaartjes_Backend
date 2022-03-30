@@ -19,4 +19,5 @@ module.exports = {
       },
     ],
   },
+  "prefer-destructuring": ["error", { object: true, array: false }],
 };

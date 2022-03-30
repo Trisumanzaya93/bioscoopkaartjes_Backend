@@ -1,5 +1,6 @@
 /* eslint-disable radix */
 /* eslint-disable no-unused-vars */
+const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModels");
 
@@ -20,6 +21,7 @@ module.exports = {
   },
   getAllMovie: async (request, response) => {
     try {
+      console.log(request.decodeToken);
       const queryString = request.query;
       const limit = parseInt(queryString.per_page ?? 2);
       const offset = parseInt(queryString.page ?? 1 * limit) - limit; // 1*3-3=0
@@ -69,6 +71,9 @@ module.exports = {
         );
       }
 
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      redis.setEx(`getMovie: $(id)`, 3600, JSON.stringify(result));
+
       return helperWrapper.response(
         response,
         200,
@@ -76,16 +81,19 @@ module.exports = {
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
   createMovie: async (request, response) => {
     try {
+      console.log(request.file);
       const { name, category, synopsis } = request.body;
       const setData = {
         name,
         category,
         synopsis,
+        // image: request.file ? request.file.filename : "" (untuk cek gambar)
       };
       const result = await movieModel.createMovie(request.body);
       return helperWrapper.response(
@@ -95,6 +103,7 @@ module.exports = {
         // result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
