@@ -20,7 +20,6 @@ module.exports = {
         totalPayment,
       };
       const result = await bookingModels.createBooking(setBooking);
-      console.log(result);
 
       seat.map(async (item) => {
         const setData = {
@@ -37,7 +36,6 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -56,24 +54,9 @@ module.exports = {
         );
       }
 
-      const {
-        scheduleId,
-        dateBooking,
-        timeBooking,
-        totalTicket,
-        totalPayment,
-        paymentMethod,
-        statusPayment,
-        statusUsed,
-      } = request.body;
+      const { scheduleId, statusUsed } = request.body;
       const setData = {
         scheduleId,
-        dateBooking,
-        timeBooking,
-        totalTicket,
-        totalPayment,
-        paymentMethod,
-        statusPayment,
         statusUsed,
         updatedAt: new Date(Date.now()),
       };

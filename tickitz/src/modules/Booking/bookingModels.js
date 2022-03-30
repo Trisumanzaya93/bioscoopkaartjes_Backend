@@ -1,5 +1,5 @@
 const connection = require("../../config/mysql");
-
+/* eslint-disable no-unused-vars */
 module.exports = {
   createBooking: (data) =>
     new Promise((resolve, reject) => {
@@ -18,7 +18,6 @@ module.exports = {
           }
         }
       );
-      console.log(query.sql);
     }),
   createSeat: (data) =>
     new Promise((resolve, reject) => {
@@ -37,7 +36,6 @@ module.exports = {
           }
         }
       );
-      console.log(query.sql);
     }),
 
   // getSeatBooking: (queryString) =>

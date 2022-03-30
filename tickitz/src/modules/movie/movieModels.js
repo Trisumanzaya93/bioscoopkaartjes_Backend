@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 const connection = require("../../config/mysql");
 
 module.exports = {
@@ -79,7 +81,7 @@ module.exports = {
       connection.query(
         "SELECT * FROM movie WHERE id = ?",
         id,
-      
+
         (error, result) => {
           if (!error) {
             resolve(result);

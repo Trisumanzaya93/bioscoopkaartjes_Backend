@@ -1,3 +1,5 @@
+/* eslint-disable radix */
+/* eslint-disable no-unused-vars */
 const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModels");
 
@@ -28,7 +30,7 @@ module.exports = {
         offset,
       });
       const totalData = await movieModel.getCountMovie();
-      const totalPage = Math.ceil(totalData / limit); //membulatkan ke atas: Math.ceil()
+      const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {
         offset,
         totalPage,
@@ -45,7 +47,6 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -141,13 +142,14 @@ module.exports = {
     }
   },
   deleteMovie: async (request, response) => {
-    const { id } = request.params;
-    const newId = parseInt(id);
     try {
+      const { id } = request.params;
+      const newId = parseInt(id);
       const checkId = await movieModel.getMovieById(newId);
 
-      if (checkId.length === 0)
+      if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
+      }
 
       await movieModel.deleteMovie(newId);
       // 1. tangkap id

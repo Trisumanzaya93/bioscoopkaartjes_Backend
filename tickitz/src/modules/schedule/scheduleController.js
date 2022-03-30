@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable radix */
+/* eslint-disable no-console */
 const helperWrapper = require("../../helpers/wrapper");
 const scheduleModel = require("./scheduleModels");
 
@@ -14,7 +17,7 @@ module.exports = {
         offset,
       });
       const totalData = await scheduleModel.getCountSchedule();
-      const totalPage = Math.ceil(totalData / limit); //membulatkan ke atas: Math.ceil()
+      const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {
         offset,
         totalPage,

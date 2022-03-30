@@ -4,7 +4,7 @@ const Router = express.Router();
 
 const movieRoutes = require("../modules/movie/movieRoutes");
 const scheduleRoutes = require("../modules/schedule/scheduleRoutes");
-const bookingRoutes = require("../modules/Booking/bookingRoutes");
+const bookingRoutes = require("../modules/booking/bookingRoutes");
 
 Router.use("/movie", movieRoutes);
 Router.use("/schedule", scheduleRoutes);
