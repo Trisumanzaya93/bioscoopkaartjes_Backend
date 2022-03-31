@@ -1,6 +1,4 @@
-const { request } = require("express");
 const redis = require("../config/redis");
-const { response } = require("../helpers/wrapper");
 const helperWrapper = require("../helpers/wrapper");
 
 module.exports = {
@@ -19,7 +17,21 @@ module.exports = {
         );
       }
       //   console.log("data tidak ada di dalam redis");
-      next();
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+  clearMovieRedis: async (request, response, next) => {
+    try {
+      const keys = await redis.keys("getMovie:*");
+      if (keys.length > 0) {
+        keys.forEach(async (element) => {
+          console.log(element);
+          await redis.del(element);
+        });
+      }
+      return next();
     } catch (error) {
       return helperWrapper.response(response, 400, error.message, null);
     }

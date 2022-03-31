@@ -1,3 +1,4 @@
+const { request } = require("express");
 const connection = require("../../config/mysql");
 /* eslint-disable no-unused-vars */
 module.exports = {
@@ -18,6 +19,7 @@ module.exports = {
           }
         }
       );
+      console.log(data);
     }),
   createSeat: (data) =>
     new Promise((resolve, reject) => {
@@ -38,39 +40,53 @@ module.exports = {
       );
     }),
 
-  // getSeatBooking: (queryString) =>
-  //   new Promise((resolve, reject) => {
-  //     let sqlQuery =
-  //       "SELECT bookingseat.seat FROM `bookingseat` JOIN booking ON bookingseat.bookingId = booking.id WHERE booking.id = ?";
+  getBookingByIdBooking: (id) =>
+    new Promise((resolve, reject) => {
+      let querySql =
+        "SELECT booking.*, bookingseat.seat, bookingseat.createdAt, bookingseat.updatedAt, movie.name, movie.category FROM `booking` INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id INNER JOIN bookingseat ON bookingseat.bookingId = booking.id WHERE booking.id = ?";
 
-  //     // if (queryString) {
-  //     //   sqlQuery +=
-  //     //     "WHERE scheduleId = ? AND dateBooking =? AND timeBooking = ?";
-  //     // }
-  //     connection.query(sqlQuery, (error, result) => {
-  //       if (!error) {
-  //         resolve(result[0].total);
-  //       } else {
-  //         reject(new Error(error.sqlMessage));
-  //       }
-  //     });
-  //   }),
+      connection.query(querySql, id, (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Error(error.sqlMessage));
+        }
+      });
+    }),
 
-  // getBookingByIdBooking: (id) =>
-  //   new Promise((resolve, reject) => {
-  //     connection.query(
-  //       "SELECT booking.*, movie.name, movie.category FROM `booking` JOIN schedule ON booking.scheduleId = schedule.id JOIN movie ON schedule.movieId = movie.id WHERE booking.id =?",
-  //       id,
-  //       (error, result) => {
-  //         if (!error) {
-  //           resolve(result);
-  //         } else {
-  //           reject(new Error(error.sqlMessage));
-  //         }
-  //       }
-  //     );
-  //   }),
-  updateStatusBooking: (id, data) =>
+  getSeatBooking: (data) =>
+    new Promise((resolve, reject) => {
+      const sqlQuery =
+        "SELECT bookingseat.seat FROM `bookingseat` JOIN booking ON bookingseat.bookingId = booking.id WHERE scheduleId = ? AND dateBooking = ? AND timeBooking = ?";
+
+      // if (queryString) {
+      //   sqlQuery +=
+      //     "WHERE scheduleId = ? AND dateBooking =? AND timeBooking = ?";
+      // }
+      connection.query(sqlQuery, seat, (error, result) => {
+        if (!error) {
+          resolve(result[0].total);
+        } else {
+          reject(new Error(error.sqlMessage));
+        }
+      });
+    }),
+
+  getDashboardBooking: (month) =>
+    new Peomise((resolve, reject) => {
+      const query =
+        "SELECT MONTH (createdAt) AS Month, SUM(totalPayment) AS total FROM `booking` GROUP BY MONTH (createdAt)";
+
+      connection.query(sqlQuery, month, (error, result) => {
+        if (!error) {
+          resolve(result[0].total);
+        } else {
+          reject(new Error(error.sqlMessage));
+        }
+      });
+    }),
+
+  updateStatusBooking: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
         "UPDATE booking SET ? WHERE id = ?",

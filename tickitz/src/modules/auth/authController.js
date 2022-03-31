@@ -20,6 +20,7 @@ module.exports = {
           null
         );
       }
+      // nge HASH PASWORD
       passwordHash = await bcrypt.hash(password, 10);
       const setData = {
         firstName,

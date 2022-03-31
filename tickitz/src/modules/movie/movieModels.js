@@ -16,7 +16,7 @@ module.exports = {
         }
       );
     }),
-
+    
   getAllMovie: (queryString) =>
     new Promise((resolve, reject) => {
       const query = {

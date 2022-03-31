@@ -1,6 +1,8 @@
+const { request, response } = require("express");
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
+const helperWrapper = require("../helpers/wrapper");
 
 // // JIKA MENYIMPAN DATA DI DALAM PROJECT BACKEND
 
@@ -21,6 +23,22 @@ const storage = new CloudinaryStorage({
 //   },
 // });
 
+// UNTUK PENGECEKAN LIMIT DAN EKSTENSI BISA DITAMBAH DI MIDDLEWARE
+// PROSES KONDISI LIMIT DAN CEK EKSTENSI FILE IN HERE
+
 const upload = multer({ storage }).single("image");
-console.log(upload);
-module.exports = upload;
+
+const handlingUpload = (request, response, next) => {
+  upload(request, response, (error) => {
+    if (error instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      return helperWrapper.response(response, 401, error.message, null);
+    } else if (error) {
+      // An unknown error occurred when uploading.
+      return helperWrapper.response(response, 401, error.message, null);
+    }
+    return next();
+  });
+};
+
+module.exports = handlingUpload;
