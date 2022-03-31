@@ -9,15 +9,18 @@ const middlewareRedis = require("../../middleware/redis");
 const { clearMovieRedis } = require("../../middleware/redis");
 
 Router.get(
+  "/",
+  middlewareAuth.authentication,
+  middlewareRedis.getMovieRedis,
+  movieController.getAllMovie
+);
+
+Router.get(
   "/:id",
   middlewareRedis.getMovieByIdRedis,
   movieController.getMovieById
 );
 
-Router.get("/", middlewareAuth.authentication, movieController.getAllMovie);
-
-Router.get("/", movieController.getAllMovie);
-Router.get("/:id", movieController.getMovieById);
 Router.post("/", middlewareUpload, movieController.createMovie); // authentication isAdmin
 Router.patch(
   "/:id",
