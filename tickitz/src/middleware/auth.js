@@ -7,27 +7,24 @@ const { login } = require("../modules/auth/authController");
 module.exports = {
   authentication: (request, response, next) => {
     // const token = request.header("x-access-token");
-    const token = request.headers.authorization;
+    let token = request.headers.authorization;
 
     if (!token) {
       return helperWrapper.response(response, 403, "Please login first", null);
     }
 
     token = token.split(" ")[1];
-    console.log(token);
     jwt.verify(token, "RAHASIA", (error, payload) => {
       if (error) {
         return helperWrapper.response(response, 403, error, null);
       }
-      const { id, email } = payload;
-      request.userInfo = { id, email };
+      const { id, email, role } = payload;
+      request.userInfo = { id, email, role };
 
-      //untuk menyimpan token login
-      decodeToken = userInfo;
-      // request.decodeToken = result;
       next();
     });
   },
+
   isAdmin: (request, response, next) => {
     const { role } = request.userInfo;
     if (role !== "admin") {

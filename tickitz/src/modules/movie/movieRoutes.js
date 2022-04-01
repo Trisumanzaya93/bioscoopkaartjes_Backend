@@ -7,10 +7,12 @@ const middlewareAuth = require("../../middleware/auth");
 const middlewareUpload = require("../../middleware/uploadMovie");
 const middlewareRedis = require("../../middleware/redis");
 const { clearMovieRedis } = require("../../middleware/redis");
+const middlewareUsers = require("../../middleware/isAdmin");
 
 Router.get(
   "/",
   middlewareAuth.authentication,
+  middlewareUsers,
   middlewareRedis.getMovieRedis,
   movieController.getAllMovie
 );
@@ -21,13 +23,22 @@ Router.get(
   movieController.getMovieById
 );
 
-Router.post("/", middlewareUpload, movieController.createMovie); // authentication isAdmin
+// login - cek token dulu
+// middlewareUsers u/ cek role
+
+Router.post(
+  "/",
+  middlewareUsers,
+  middlewareUpload,
+  movieController.createMovie
+); // authentication isAdmin
 Router.patch(
   "/:id",
+  middlewareUsers,
   middlewareRedis.clearMovieRedis,
   movieController.updateMovie
 ); // authentication isAdmin
-Router.delete("/:id", movieController.deleteMovie); // authentication isAdmin
+Router.delete("/:id", middlewareUsers, movieController.deleteMovie); // authentication isAdmin
 
 // Router.get("/hello", movieController.getHello);
 // Router.get("/hello", (request, response) => {
