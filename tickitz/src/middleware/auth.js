@@ -12,7 +12,9 @@ module.exports = {
     if (!token) {
       return helperWrapper.response(response, 403, "Please login first", null);
     }
-    // token = token.split(" ")[1];
+
+    token = token.split(" ")[1];
+    console.log(token);
     jwt.verify(token, "RAHASIA", (error, payload) => {
       if (error) {
         return helperWrapper.response(response, 403, error, null);
@@ -21,12 +23,20 @@ module.exports = {
       request.userInfo = { id, email };
 
       //untuk menyimpan token login
+      decodeToken = userInfo;
       // request.decodeToken = result;
       next();
     });
   },
   isAdmin: (request, response, next) => {
+    const { role } = request.userInfo;
+    if (role !== "admin") {
+      return helperWrapper.response(response, 401, "Can Not Access !", null);
+    }
     console.log(request.decodeToken);
+    next();
   },
   //Tambahkan proses untuk mengecek role apakah user yang masuk admin atau bukan
+  // Jika tidak berikan respon error
+  // jika iya akan lanjut ke proses controller
 };

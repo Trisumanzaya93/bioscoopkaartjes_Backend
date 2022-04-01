@@ -6,12 +6,13 @@ const authModels = require("./authModels");
 module.exports = {
   register: async (request, response) => {
     try {
-      const { firstName, email, password } = request.body;
+      const { firstName, lastName, email, noTelp, password } = request.body;
       // 1. password di encript
       // 2. Ketika registrasi dengan email yang sama: tambahkan kondisi email sudah terdaftar atau belum
       // ada 1 lagi
 
       const result = await authModels.getUserByEmail(email);
+
       if (result.length >= 1) {
         return helperWrapper.response(
           response,
@@ -20,11 +21,15 @@ module.exports = {
           null
         );
       }
-      // nge HASH PASWORD
+
+      //HASH PASWORD
+      // Create User ke database
       passwordHash = await bcrypt.hash(password, 10);
       const setData = {
         firstName,
+        lastName,
         email,
+        noTelp,
         password: passwordHash,
       };
 
@@ -65,6 +70,7 @@ module.exports = {
 
       // 3. PROSES JWT
       const payload = checkUser[0];
+
       const jwtOptions = {
         expiresIn: "24h",
       };
@@ -80,4 +86,5 @@ module.exports = {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
+
 };

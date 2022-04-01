@@ -93,7 +93,7 @@ module.exports = {
         name,
         category,
         synopsis,
-        // image: request.file ? request.file.filename : "" (untuk cek gambar)
+        image: request.file ? request.file.filename : ""
       };
       const result = await movieModel.createMovie(request.body);
       return helperWrapper.response(
@@ -167,6 +167,9 @@ module.exports = {
       // 4. resolve (id)
       // 5. Set Response
       // yg diatas Buat sendiri
+
+      // clue destroy gambar lama Cloudinary
+      
       return helperWrapper.response(response, 200, "delete success !");
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", error);

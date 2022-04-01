@@ -37,55 +37,15 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
 
   getBookingByIdBooking: async (request, response) => {
     try {
-      const {
-        id,
-        scheduleId,
-        dateBooking,
-        timeBooking,
-        totalTicket,
-        totalPayment,
-        paymentMethod,
-        statusPayment,
-        statusUsed,
-        seat,
-        createdAt,
-        updatedAt,
-        name,
-        category,
-      } = request.params;
-
-      const setData = {
-        id,
-        scheduleId,
-        dateBooking,
-        timeBooking,
-        totalTicket,
-        totalPayment,
-        paymentMethod,
-        statusPayment,
-        statusUsed,
-        seat,
-        createdAt,
-        updatedAt,
-        name,
-        category,
-      };
-
-      seat.map(async (item) => {
-        const newData = {
-          id: result.id,
-          seat: item,
-        };
-        console.log(item);
-        await bookingModels.getBookingByIdBooking(newData);
-      });
+      const { id } = request.params;
+      const result = await bookingModels.getBookingByIdBooking(id);
+      const seat = result.map((item) => item.seat);
 
       if (result.length <= 0) {
         return helperWrapper.response(
@@ -95,12 +55,11 @@ module.exports = {
           null
         );
       }
-      return helperWrapper.response(
-        response,
-        200,
-        "Success get data !",
-        result
-      );
+
+      return helperWrapper.response(response, 200, "Success get data !", {
+        ...result[0],
+        seat,
+      });
     } catch (error) {
       console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -109,23 +68,38 @@ module.exports = {
 
   getSeatBooking: async (request, response) => {
     try {
-      const { scheduleId, dateBooking, timeBooking, seat } = request.body;
-      const setSeatBooking = {
-        scheduleId,
-        dateBooking,
-        timeBooking,
-        seat,
-      };
-      const result = await bookingModels.getSeatBooking(setSeatBooking);
+      const { scheduleId, dateBooking, timeBooking } = request.query;
 
-      seat.map(async (item) => {
-        const setData = {
-          bookingId: result.id,
-          seat: item,
-        };
-        console.log(seat);
-        await bookingModels.getSeatBooking(setData);
-      });
+      const date = new Date(dateBooking);
+
+      const result = await bookingModels.getSeatBooking(
+        scheduleId,
+        date,
+        timeBooking
+      );
+
+      const seat = result.map((item) => item.seat);
+
+      return helperWrapper.response(
+        response,
+        200,
+        "Success Booking Seat",
+        seat
+      );
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  getDashboardBooking: async (request, response) => {
+    try {
+      const { scheduleId, movieId, location } = request.query;
+
+      const result = await bookingModels.getDashboardBooking(
+        scheduleId,
+        movieId,
+        location
+      );
 
       return helperWrapper.response(
         response,
@@ -138,24 +112,11 @@ module.exports = {
     }
   },
 
-  getDashboardBooking: async (request, response) => {
-    try {
-      const { scheduleId, movieId, location } = query.params;
-      // const total = SUM totalPayment;
-      const setDashboardBooking = {
-        month,
-        total,
-      };
-      const result = await bookingModels.getDashboardBooking(month);
-    } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
-    }
-  },
-
   updateStatusBooking: async (request, response) => {
     try {
       const { id } = request.params;
       const checkId = await bookingModels.getBookingByIdBooking(id);
+      console.log(checkId);
 
       if (checkId.length <= 0) {
         return helperWrapper.response(
@@ -166,21 +127,9 @@ module.exports = {
         );
       }
 
-      const { scheduleId, statusUsed } = request.body;
       const setData = {
-        scheduleId,
-        statusUsed,
-        updatedAt: new Date(Date.now()),
+        statusUsed: "notActived",
       };
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const data in setData) {
-        // console.log(data); //property
-        // console.log(setData[data]); //value
-        if (!setData[data]) {
-          delete setData[data];
-        }
-      }
 
       const result = await bookingModels.updateStatusBooking(id, setData);
 
@@ -191,6 +140,7 @@ module.exports = {
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
