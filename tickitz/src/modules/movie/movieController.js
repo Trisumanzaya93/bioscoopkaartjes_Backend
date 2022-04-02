@@ -3,6 +3,7 @@
 const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModels");
+const cloudinary = require("../../config/cloudinary");
 
 module.exports = {
   getHello: async (request, response) => {
@@ -93,8 +94,9 @@ module.exports = {
         name,
         category,
         synopsis,
-        image: request.file ? request.file.filename : ""
+        image: request.file ? request.file.path : "",
       };
+
       const result = await movieModel.createMovie(request.body);
       return helperWrapper.response(
         response,
@@ -121,10 +123,25 @@ module.exports = {
         );
       }
 
-      const { name, category, synopsis } = request.body;
+      const {
+        name,
+        category,
+        image,
+        director,
+        casts,
+        releaseDate,
+        duration,
+        synopsis,
+      } = request.body;
+
       const setData = {
         name,
         category,
+        image: request.file ? request.file.path : "",
+        director,
+        casts,
+        releaseDate,
+        duration,
         synopsis,
         updatedAt: new Date(Date.now()),
       };
@@ -147,29 +164,32 @@ module.exports = {
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
   deleteMovie: async (request, response) => {
     try {
+      // 1. tangkap id
       const { id } = request.params;
       const newId = parseInt(id);
       const checkId = await movieModel.getMovieById(newId);
 
+      // 2. proses pengecekan apakah id berada di dalam database
       if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
       }
 
       await movieModel.deleteMovie(newId);
-      // 1. tangkap id
-      // 2. proses pengecekan apakah id berada di dalam database
-      // 3. dengan query = DELETE FROM movie Whre id =?
-      // 4. resolve (id)
-      // 5. Set Response
-      // yg diatas Buat sendiri
 
-      // clue destroy gambar lama Cloudinary
-      
+      // Destroy gambar lama Cloudinary
+      cloudinary.uploader.destroy(
+        request.file ? request.file.path : "",
+        (result) => {
+          console.log(result);
+        }
+      );
+
       return helperWrapper.response(response, 200, "delete success !");
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", error);

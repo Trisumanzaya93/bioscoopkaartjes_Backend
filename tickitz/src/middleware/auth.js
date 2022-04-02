@@ -24,16 +24,17 @@ module.exports = {
       next();
     });
   },
-
   isAdmin: (request, response, next) => {
-    const { role } = request.userInfo;
+    let { role } = request.userInfo;
+
     if (role !== "admin") {
-      return helperWrapper.response(response, 401, "Can Not Access !", null);
+      return helperWrapper.response(
+        response,
+        401,
+        "You Can Not Access This Page !",
+        null
+      );
     }
-    console.log(request.decodeToken);
     next();
   },
-  //Tambahkan proses untuk mengecek role apakah user yang masuk admin atau bukan
-  // Jika tidak berikan respon error
-  // jika iya akan lanjut ke proses controller
 };

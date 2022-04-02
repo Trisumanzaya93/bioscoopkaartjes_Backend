@@ -1,5 +1,6 @@
 const helperWrapper = require("../../helpers/wrapper");
 const userModels = require("./usersModels");
+const middlewareProfileImage = require("../../middleware/uploadProfile");
 
 module.exports = {
   getDataUserByUserId: async (request, response) => {
@@ -62,6 +63,7 @@ module.exports = {
 
   updateImage: async (request, response) => {
     try {
+      console.log(request.file);
       const { id } = request.params;
       const checkId = await userModels.getDataUserByUserId(id);
 
@@ -76,9 +78,9 @@ module.exports = {
 
       const { image } = request.body;
       const setData = {
-        image
+        image: request.file ? request.file.path : "",
       };
-
+      console.log("image", image);
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
         // console.log(data); //property
