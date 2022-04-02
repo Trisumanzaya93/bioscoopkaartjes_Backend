@@ -1,6 +1,8 @@
+const { token } = require("morgan");
 const helperWrapper = require("../../helpers/wrapper");
 const userModels = require("./usersModels");
-const middlewareProfileImage = require("../../middleware/uploadProfile");
+const authModels = require("../auth/authModels.js");
+const bcrypt = require("bcrypt");
 
 module.exports = {
   getDataUserByUserId: async (request, response) => {
@@ -32,11 +34,7 @@ module.exports = {
       }
 
       const { firstName, lastName, noTelp } = request.body;
-      const setData = {
-        firstName,
-        lastName,
-        noTelp,
-      };
+      const setData = { id, firstName, lastName, noTelp };
 
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
@@ -46,13 +44,12 @@ module.exports = {
           delete setData[data];
         }
       }
-
       const result = await userModels.updateProfile(id, setData);
 
       return helperWrapper.response(
         response,
         200,
-        "Success get data !",
+        "Success update profile !",
         result
       );
     } catch (error) {
@@ -95,7 +92,55 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success get data !",
+        "Success update image !",
+        result
+      );
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  updatePassword: async (request, response) => {
+    try {
+      const { newPassword, confirmPassword, oldPassword } = request.body;
+      const { email } = request.userInfo;
+      const checkOldPassword = await authModels.getUserByEmail(email);
+      console.log(checkOldPassword);
+
+      // 2. jika password ketika di cocokkan salah
+      const isValid = await bcrypt.compare(
+        oldPassword,
+        checkOldPassword[0].password
+      );
+      if (!isValid) {
+        return helperWrapper.response(response, 400, "Wrong password");
+      }
+      if (newPassword !== confirmPassword) {
+        return helperWrapper.response(
+          response,
+          400,
+          "Your Password doesn't Match ! "
+        );
+      }
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+
+      const result = await userModels.updatePassword(email, passwordHash);
+
+      // // 3. PROSES JWT
+      // const payload = checkUser[0];
+
+      // const jwtOptions = {
+      //   expiresIn: "24h",
+      // };
+      // delete payload.password;
+
+      // const token = jwt.sign({ ...payload }, "RAHASIA", jwtOptions);
+
+      return helperWrapper.response(
+        response,
+        200,
+        "Password changed !",
         result
       );
     } catch (error) {

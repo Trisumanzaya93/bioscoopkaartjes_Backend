@@ -173,9 +173,10 @@ module.exports = {
       // 1. tangkap id
       const { id } = request.params;
       const newId = parseInt(id);
-      const checkId = await movieModel.getMovieById(newId);
 
       // 2. proses pengecekan apakah id berada di dalam database
+      const checkId = await movieModel.getMovieById(newId);
+
       if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
       }

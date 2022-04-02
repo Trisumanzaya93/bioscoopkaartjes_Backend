@@ -1,10 +1,11 @@
+// const { query } = require("../../config/mysql");
 const connection = require("../../config/mysql");
 
 module.exports = {
   getDataUserByUserId: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM user WHERE id = ?",
+        "SELECT * FROM user WHERE id = ? ",
         id,
         (error, result) => {
           if (!error) {
@@ -18,7 +19,9 @@ module.exports = {
 
   updateProfile: (id, data) =>
     new Promise((resolve, reject) => {
-      connection.query("UPDATE user SET WHERE id = ?", [data, id], (error) => {
+      const querySql = "UPDATE `user` SET ? WHERE id = ? ";
+      console.log(user);
+      connection.query(querySql, [data, id], (error) => {
         if (!error) {
           const newResult = {
             id,
@@ -34,7 +37,7 @@ module.exports = {
   updateImage: (id, data) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE user SET ? WHERE id = ?",
+        "UPDATE user SET ? WHERE id = ? ",
         [data, id],
         (error) => {
           if (!error) {
@@ -49,4 +52,17 @@ module.exports = {
         }
       );
     }),
+
+  updatePassword: (email, password) => {
+    return new Promise((resolve, reject) => {
+      querySql = "UPDATE user SET password = ?  WHERE email = ? ";
+      connection.query(querySql, [password, email], (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(error);
+        }
+      });
+    });
+  },
 };

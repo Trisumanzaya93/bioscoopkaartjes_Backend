@@ -86,5 +86,4 @@ module.exports = {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
-
 };
