@@ -22,7 +22,7 @@ module.exports = {
         sortBy: queryString.sortBy ?? "name",
       };
       let sqlQuery =
-        "SELECT schedule.*, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director, movie.cast, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON movie.id = schedule.movieId";
+        "SELECT schedule.*, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director, movie.casts, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON movie.id = schedule.movieId";
 
       let firstWhere = true;
       if (query.search) {

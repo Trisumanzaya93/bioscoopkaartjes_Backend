@@ -3,6 +3,8 @@ const helperWrapper = require("../../helpers/wrapper");
 const userModels = require("./usersModels");
 const authModels = require("../auth/authModels.js");
 const bcrypt = require("bcrypt");
+const { request } = require("express");
+const { response } = require("../../helpers/wrapper");
 
 module.exports = {
   getDataUserByUserId: async (request, response) => {
@@ -21,10 +23,10 @@ module.exports = {
 
   updateProfile: async (request, response) => {
     try {
-      const { id } = request.params;
-      const checkId = await userModels.getDataUserByUserId(id);
+      const { id } = request.userInfo;
+      const checkUser = await userModels.getDataUserByUserId(id);
 
-      if (checkId.length <= 0) {
+      if (checkUser.length <= 0) {
         return helperWrapper.response(
           response,
           404,
@@ -34,18 +36,18 @@ module.exports = {
       }
 
       const { firstName, lastName, noTelp } = request.body;
-      const setData = { id, firstName, lastName, noTelp };
+      const setData = { firstName, lastName, noTelp };
 
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
-        // console.log(data); //property
-        // console.log(setData[data]); //value
+        console.log("data", data); //property
+        console.log("setData", setData[data]); //value
         if (!setData[data]) {
           delete setData[data];
         }
       }
-      const result = await userModels.updateProfile(id, setData);
 
+      const result = await userModels.updateProfile(id, setData);
       return helperWrapper.response(
         response,
         200,
@@ -60,11 +62,10 @@ module.exports = {
 
   updateImage: async (request, response) => {
     try {
-      console.log(request.file);
-      const { id } = request.params;
-      const checkId = await userModels.getDataUserByUserId(id);
-
-      if (checkId.length <= 0) {
+      const { email, id } = request.userInfo;
+      const checkUser = await authModels.getUserByEmail(email);
+      console.log(id, email);
+      if (checkUser.length <= 0) {
         return helperWrapper.response(
           response,
           404,
@@ -75,9 +76,11 @@ module.exports = {
 
       const { image } = request.body;
       const setData = {
-        image: request.file ? request.file.path : "",
+        image: request.file
+          ? request.file.filename + "." + request.file.mimetype.split("/")[1]
+          : "",
       };
-      console.log("image", image);
+
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
         // console.log(data); //property
@@ -86,7 +89,6 @@ module.exports = {
           delete setData[data];
         }
       }
-
       const result = await userModels.updateImage(id, setData);
 
       return helperWrapper.response(
@@ -126,16 +128,6 @@ module.exports = {
       const passwordHash = await bcrypt.hash(newPassword, 10);
 
       const result = await userModels.updatePassword(email, passwordHash);
-
-      // // 3. PROSES JWT
-      // const payload = checkUser[0];
-
-      // const jwtOptions = {
-      //   expiresIn: "24h",
-      // };
-      // delete payload.password;
-
-      // const token = jwt.sign({ ...payload }, "RAHASIA", jwtOptions);
 
       return helperWrapper.response(
         response,

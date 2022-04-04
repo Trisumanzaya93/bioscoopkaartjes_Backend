@@ -8,6 +8,7 @@ Router.post("/", bookingController.createBooking);
 Router.get("/seatbooking", bookingController.getSeatBooking);
 Router.get("/dashboard", bookingController.getDashboardBooking);
 Router.patch("/ticket/:id", bookingController.updateStatusBooking);
+Router.get("/user/:userId", bookingController.getBookingByUserId);
 Router.get("/:id", bookingController.getBookingByIdBooking);
 // Router.delete("/:id", bookingController.deleteBooking);
 

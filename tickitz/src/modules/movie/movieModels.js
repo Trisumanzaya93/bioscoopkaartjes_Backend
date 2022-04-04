@@ -27,14 +27,25 @@ module.exports = {
 
       let firstWhere = true;
       if (queryString.search) {
-        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name like '%${
+        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name LIKE '%${
           queryString.search
-        }%' OR category like '%${queryString.search}%')`;
+        }%' OR category like '%${
+          queryString.search
+        }%' OR MONTH(releaseDate) LIKE '%${queryString.search}%')`;
         firstWhere = false;
       }
+
+      // if (queryString.searchRelease = "" && queryString.searchRelease) {
+      //   sqlQuery += ` ${firstWhere ? "WHERE" : "AND"} ( name LIKE = '%${
+      //     queryString.searchRelease
+      //   }%' AND MONTH(releaseDate) = ${queryString.searchRelease})`;
+      //   firstWhere = false;
+      // }
+
       if (queryString.sort && queryString.sortBy) {
         sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
       }
+
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
 
       connection.query(sqlQuery, (error, result) => {
@@ -102,7 +113,6 @@ module.exports = {
 
   deleteMovie: (id) =>
     new Promise((resolve, reject) => {
-      console.log(typeof id);
       connection.query(
         "DELETE FROM movie WHERE id = ?",
         [id],

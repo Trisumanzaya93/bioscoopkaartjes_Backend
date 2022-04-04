@@ -1,11 +1,11 @@
 const helperWrapper = require("../../helpers/wrapper");
 const bookingModels = require("./bookingModels");
 
-
 module.exports = {
   createBooking: async (request, response) => {
     try {
       const {
+        userId,
         scheduleId,
         dateBooking,
         timeBooking,
@@ -15,6 +15,7 @@ module.exports = {
       } = request.body;
 
       const setBooking = {
+        userId,
         scheduleId,
         dateBooking,
         timeBooking,
@@ -42,6 +43,31 @@ module.exports = {
     }
   },
 
+  getBookingByUserId: async (request, response) => {
+    try {
+      const { userId } = request.params;
+      const result = await bookingModels.getBookingByUserId(userId);
+      const seat = result.map((item) => item.seat);
+
+      console.log(result);
+      if (result.length <= 0) {
+        return helperWrapper.response(
+          response,
+          404,
+          `Data by user id ${userId} not found`,
+          null
+        );
+      }
+
+      return helperWrapper.response(response, 200, "Success get data !", {
+        ...result[0],
+        seat,
+      });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
   getBookingByIdBooking: async (request, response) => {
     try {
       const { id } = request.params;
@@ -56,6 +82,9 @@ module.exports = {
           null
         );
       }
+
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      redis.setEx(`getMovie: ${id}`, 3600, JSON.stringify(result));
 
       return helperWrapper.response(response, 200, "Success get data !", {
         ...result[0],

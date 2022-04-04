@@ -22,9 +22,8 @@ module.exports = {
   },
   getAllMovie: async (request, response) => {
     try {
-      console.log(request.decodeToken);
       const queryString = request.query;
-      const limit = parseInt(queryString.per_page ?? 2);
+      const limit = parseInt(queryString.per_page ?? 3);
       const offset = parseInt(queryString.page ?? 1 * limit) - limit; // 1*3-3=0
 
       const result = await movieModel.getAllMovie({
@@ -33,6 +32,7 @@ module.exports = {
         offset,
       });
       const totalData = await movieModel.getCountMovie();
+
       const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {
         offset,
@@ -42,6 +42,7 @@ module.exports = {
         page: parseInt(queryString.page),
       };
 
+      console.log(result);
       return helperWrapper.response(
         response,
         200,
@@ -50,16 +51,12 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
   getMovieById: async (request, response) => {
     try {
-      // request = {
-      //   params: {
-      //     id: 1
-      //   }
-      // }
       const { id } = request.params;
       const result = await movieModel.getMovieById(id);
 
@@ -88,16 +85,20 @@ module.exports = {
   },
   createMovie: async (request, response) => {
     try {
-      console.log(request.file);
-      const { name, category, synopsis } = request.body;
+      console.log(
+        request.file.filename + "." + request.file.mimetype.split("/")[1]
+      );
+      const { name, category, synopsis, image } = request.body;
       const setData = {
         name,
         category,
         synopsis,
-        image: request.file ? request.file.path : "",
+        image: request.file
+          ? request.file.filename + "." + request.file.mimetype.split("/")[1]
+          : "",
       };
+      const result = await movieModel.createMovie(setData);
 
-      const result = await movieModel.createMovie(request.body);
       return helperWrapper.response(
         response,
         200,
@@ -137,7 +138,9 @@ module.exports = {
       const setData = {
         name,
         category,
-        image: request.file ? request.file.path : "",
+        image: request.file
+          ? request.file.filename + "." + request.file.mimetype.split("/")[1]
+          : "",
         director,
         casts,
         releaseDate,
@@ -146,6 +149,8 @@ module.exports = {
         updatedAt: new Date(Date.now()),
       };
 
+
+      
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
         // console.log(data); //property
@@ -176,23 +181,22 @@ module.exports = {
 
       // 2. proses pengecekan apakah id berada di dalam database
       const checkId = await movieModel.getMovieById(newId);
-
+      console.log(checkId);
       if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
       }
 
-      await movieModel.deleteMovie(newId);
-
+      const image = checkId[0].image.split(".")[0];
+      console.log(image);
       // Destroy gambar lama Cloudinary
-      cloudinary.uploader.destroy(
-        request.file ? request.file.path : "",
-        (result) => {
-          console.log(result);
-        }
-      );
+      const destroy = await cloudinary.uploader.destroy(image, (result) => {
+        console.log(result);
+      });
+      await movieModel.deleteMovie(newId);
 
       return helperWrapper.response(response, 200, "delete success !");
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", error);
     }
   },

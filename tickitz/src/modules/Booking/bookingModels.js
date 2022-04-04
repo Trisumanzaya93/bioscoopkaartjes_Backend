@@ -40,13 +40,32 @@ module.exports = {
       );
     }),
 
+  getBookingByUserId: (userId) =>
+    new Promise((resolve, reject) => {
+      let querySql =
+        "SELECT booking.*," +
+        "bookingseat.seat, bookingseat.createdAt, bookingseat.updatedAt," +
+        " movie.name, movie.category FROM `booking`" +
+        "INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
+        "INNER JOIN bookingseat ON bookingseat.bookingId = booking.id " +
+        "WHERE booking.userId = ? ";
+        
+      connection.query(querySql, [userId], (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Error(error.sqlMessage));
+        }
+      });
+    }),
+
   getBookingByIdBooking: (id) =>
     new Promise((resolve, reject) => {
       let querySql =
         "SELECT booking.*, " +
         "bookingseat.seat, bookingseat.createdAt, bookingseat.updatedAt," +
         "movie.name, movie.category FROM `booking`" +
-        " INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
+        "INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
         "INNER JOIN bookingseat ON bookingseat.bookingId = booking.id " +
         "WHERE booking.id = ?";
 
@@ -103,7 +122,7 @@ module.exports = {
         if (!error) {
           const newResult = {
             id,
-            ...data
+            ...data,
           };
           resolve(newResult);
         } else {

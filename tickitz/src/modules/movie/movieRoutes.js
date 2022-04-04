@@ -42,7 +42,7 @@ Router.patch(
 Router.delete(
   "/:id",
   middlewareAuth.authentication,
-  middlewareAuth.isAdmin,
+  middlewareAuth.isAdmin, 
   movieController.deleteMovie
 ); // authentication isAdmin
 

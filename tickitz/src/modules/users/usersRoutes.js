@@ -5,7 +5,7 @@ const Router = express.Router();
 const usersController = require("./usersController");
 const middlewareAuth = require("../../middleware/auth");
 const middlewareProfileImage = require("../../middleware/uploadProfile");
-const middlewareRedis = require("../../middleware/redis");
+// const middlewareRedis = require("../../middleware/redis");
 
 Router.get(
   "/:id",
