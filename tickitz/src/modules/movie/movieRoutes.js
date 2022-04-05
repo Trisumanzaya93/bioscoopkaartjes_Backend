@@ -31,6 +31,7 @@ Router.post(
   middlewareUpload,
   movieController.createMovie
 ); // authentication isAdmin
+
 Router.patch(
   "/:id",
   middlewareAuth.authentication,
@@ -39,10 +40,11 @@ Router.patch(
   middlewareRedis.clearMovieRedis,
   movieController.updateMovie
 ); // authentication isAdmin
+
 Router.delete(
   "/:id",
   middlewareAuth.authentication,
-  middlewareAuth.isAdmin, 
+  middlewareAuth.isAdmin,
   movieController.deleteMovie
 ); // authentication isAdmin
 

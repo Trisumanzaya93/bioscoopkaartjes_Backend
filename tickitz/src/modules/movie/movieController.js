@@ -3,6 +3,7 @@
 const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModels");
+const authModels = require("../auth/authModels");
 const cloudinary = require("../../config/cloudinary");
 
 module.exports = {
@@ -85,9 +86,9 @@ module.exports = {
   },
   createMovie: async (request, response) => {
     try {
-      console.log(
-        request.file.filename + "." + request.file.mimetype.split("/")[1]
-      );
+      // console.log(
+      //   request.file.filename + "." + request.file.mimetype.split("/")[1]
+      // );
       const { name, category, synopsis, image } = request.body;
       const setData = {
         name,
@@ -149,8 +150,6 @@ module.exports = {
         updatedAt: new Date(Date.now()),
       };
 
-
-      
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
         // console.log(data); //property
@@ -181,13 +180,16 @@ module.exports = {
 
       // 2. proses pengecekan apakah id berada di dalam database
       const checkId = await movieModel.getMovieById(newId);
-      console.log(checkId);
+
       if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
       }
 
+
+      // Mengambil public_id image untuk di destroy di cloudinary saat proses delete Movie
       const image = checkId[0].image.split(".")[0];
-      console.log(image);
+
+      
       // Destroy gambar lama Cloudinary
       const destroy = await cloudinary.uploader.destroy(image, (result) => {
         console.log(result);

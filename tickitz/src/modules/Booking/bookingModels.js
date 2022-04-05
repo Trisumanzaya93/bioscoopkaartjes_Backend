@@ -49,7 +49,7 @@ module.exports = {
         "INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
         "INNER JOIN bookingseat ON bookingseat.bookingId = booking.id " +
         "WHERE booking.userId = ? ";
-        
+
       connection.query(querySql, [userId], (error, result) => {
         if (!error) {
           resolve(result);

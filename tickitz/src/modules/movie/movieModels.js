@@ -89,7 +89,6 @@ module.exports = {
           }
         }
       );
-      console.log(query.sql);
     }),
 
   updateMovie: (id, data) =>

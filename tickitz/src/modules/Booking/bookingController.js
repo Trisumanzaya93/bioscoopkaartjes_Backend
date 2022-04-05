@@ -84,7 +84,7 @@ module.exports = {
       }
 
       // PROSES UNTUK MENYIMPAN DATA KE REDIS
-      redis.setEx(`getMovie: ${id}`, 3600, JSON.stringify(result));
+      // redis.setEx(`getMovie: ${id}`, 3600, JSON.stringify(result));
 
       return helperWrapper.response(response, 200, "Success get data !", {
         ...result[0],
