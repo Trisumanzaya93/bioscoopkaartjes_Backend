@@ -22,12 +22,11 @@ src mencakup: index.js, config, helpers, modules/movie, routes.
 ## HOW TO RUN THE APP?
 
 1. Open app's directory in CMD or Terminal
-2. Type
 
+2. Type
 ```
 $ npm install
 ```
-
 3. Make new file a called .env, set up first here
 4. Turn on Web Server and MySQL can using Third-party tool like xampp, etc.
 5. Create a database with the name #nama_database, and Import file sql to phpmyadmin
