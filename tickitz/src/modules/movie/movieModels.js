@@ -26,21 +26,19 @@ module.exports = {
       let sqlQuery = "SELECT * FROM movie ";
 
       let firstWhere = true;
-      if (queryString.search) {
+      if (queryString.searchName) {
         sqlQuery += `${firstWhere ? "WHERE" : "AND"} (name LIKE '%${
-          queryString.search
-        }%' OR category like '%${
-          queryString.search
-        }%' OR MONTH(releaseDate) LIKE '%${queryString.search}%')`;
+          queryString.searchName
+        }%')`;
         firstWhere = false;
       }
 
-      // if (queryString.searchRelease = "" && queryString.searchRelease) {
-      //   sqlQuery += ` ${firstWhere ? "WHERE" : "AND"} ( name LIKE = '%${
-      //     queryString.searchRelease
-      //   }%' AND MONTH(releaseDate) = ${queryString.searchRelease})`;
-      //   firstWhere = false;
-      // }
+      if (queryString.searchRelease) {
+        sqlQuery += ` ${firstWhere ? "WHERE" : "AND"} (MONTH(releaseDate) = ${
+          queryString.searchRelease
+        })`;
+        firstWhere = false;
+      }
 
       if (queryString.sort && queryString.sortBy) {
         sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;

@@ -13,6 +13,18 @@ const routerNavigation = require("./routes");
 const app = express();
 const port = 3001;
 
+// const whitelist = ["http://127.0.0.2:5600"];
+// const corsOptions = {
+//   origin(origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+// };
+// app.use(cors(corsOptions));
+
 // midleware
 app.use(morgan("dev"));
 app.use(cors());

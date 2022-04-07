@@ -10,8 +10,17 @@ Router.post(
   middlewareAuth.authentication,
   bookingController.createBooking
 );
-Router.get("/seatbooking", bookingController.getSeatBooking);
-Router.get("/dashboard", bookingController.getDashboardBooking);
+Router.get(
+  "/seatbooking",
+  middlewareAuth.authentication,
+  bookingController.getSeatBooking
+);
+Router.get(
+  "/dashboard",
+  middlewareAuth.authentication,
+  middlewareAuth.isAdmin,
+  bookingController.getDashboardBooking
+);
 Router.patch(
   "/ticket/:id",
   middlewareAuth.authentication,

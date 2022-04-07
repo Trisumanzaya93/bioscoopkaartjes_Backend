@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable radix */
 /* eslint-disable no-console */
+const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const scheduleModel = require("./scheduleModels");
+const authModels = require("../auth/authModels");
 
 module.exports = {
   getAllSchedule: async (request, response) => {
@@ -13,7 +15,6 @@ module.exports = {
 
       const result = await scheduleModel.getAllSchedule({
         ...queryString,
-        limit,
         offset,
       });
       const totalData = await scheduleModel.getCountSchedule();
@@ -26,6 +27,9 @@ module.exports = {
         page: parseInt(queryString.page),
       };
 
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      // Method JSON.stringify() untuk mengubah objek javascript menjadi string JSON
+      redis.setEx(`getSchedule: ${queryString}`, 3600, JSON.stringify(result));
       return helperWrapper.response(
         response,
         200,
@@ -52,6 +56,10 @@ module.exports = {
           null
         );
       }
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      // Method JSON.stringify() untuk mengubah objek javascript menjadi string JSON
+      redis.setEx(`getSchedule: ${id}`, 3600, JSON.stringify(result));
+
       return helperWrapper.response(
         response,
         200,

@@ -18,24 +18,30 @@ module.exports = {
   getAllSchedule: (queryString) =>
     new Promise((resolve, reject) => {
       const query = {
-        search: queryString.search ?? "",
-        sortBy: queryString.sortBy ?? "name",
+        search: queryString.searchLocation ?? "",
+        search: queryString.searchMovieId ?? "movieId",
       };
       let sqlQuery =
-        "SELECT schedule.*, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director, movie.casts, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON movie.id = schedule.movieId";
+        "SELECT schedule.*, movie.id, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director," +
+        "movie.casts, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON schedule.movieId = movie.id";
 
       let firstWhere = true;
-      if (query.search) {
+      if (queryString.searchLocation) {
         sqlQuery += `${firstWhere ? "WHERE" : "AND"} (location like '%${
-          query.search
-        }%' OR movieId like '%${query.search}%')`;
+          queryString.searchLocation
+        }%')`;
         firstWhere = false;
       }
-      if (query.sort && query.sortBy) {
-        sqlQuery += ` ORDER BY ${query.sortBy} ${query.sort}`;
+      if (queryString.searchMovieId) {
+        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (movieId = ${
+          queryString.searchMovieId
+        })`;
+        firstWhere = false;
+      }
+      if (query.sort) {
+        sqlQuery += ` ORDER BY ${queryString.sort}`;
       }
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
-      console.log(sqlQuery);
 
       connection.query(sqlQuery, (error, result) => {
         if (!error) {

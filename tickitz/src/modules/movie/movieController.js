@@ -43,7 +43,9 @@ module.exports = {
         page: parseInt(queryString.page),
       };
 
-      console.log(result);
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      // Method JSON.stringify() untuk mengubah objek javascript menjadi string JSON
+      redis.setEx(`getMovie: ${queryString}`, 3600, JSON.stringify(result));
       return helperWrapper.response(
         response,
         200,
@@ -52,7 +54,6 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -71,6 +72,7 @@ module.exports = {
       }
 
       // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      // Method JSON.stringify() untuk mengubah objek javascript menjadi string JSON
       redis.setEx(`getMovie: ${id}`, 3600, JSON.stringify(result));
 
       return helperWrapper.response(
@@ -80,7 +82,6 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -89,10 +90,23 @@ module.exports = {
       // console.log(
       //   request.file.filename + "." + request.file.mimetype.split("/")[1]
       // );
-      const { name, category, synopsis, image } = request.body;
+      const {
+        name,
+        category,
+        director,
+        casts,
+        releaseDate,
+        duration,
+        synopsis,
+        image,
+      } = request.body;
       const setData = {
         name,
         category,
+        director,
+        casts,
+        releaseDate,
+        duration,
         synopsis,
         image: request.file
           ? request.file.filename + "." + request.file.mimetype.split("/")[1]
@@ -107,7 +121,6 @@ module.exports = {
         // result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -158,7 +171,16 @@ module.exports = {
           delete setData[data];
         }
       }
-
+      const imagePublicId = checkId[0].image.split(".")[0];
+      if (imagePublicId) {
+        // Destroy gambar lama Cloudinary
+        const destroy = await cloudinary.uploader.destroy(
+          imagePublicId,
+          (result) => {
+            console.log(result);
+          }
+        );
+      }
       const result = await movieModel.updateMovie(id, setData);
 
       return helperWrapper.response(
@@ -168,7 +190,6 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -184,21 +205,18 @@ module.exports = {
       if (checkId.length === 0) {
         return helperWrapper.response(response, 404, "Movie not found !");
       }
-
-
       // Mengambil public_id image untuk di destroy di cloudinary saat proses delete Movie
       const image = checkId[0].image.split(".")[0];
-
-      
-      // Destroy gambar lama Cloudinary
-      const destroy = await cloudinary.uploader.destroy(image, (result) => {
-        console.log(result);
-      });
+      if (image) {
+        // Destroy gambar lama di Cloudinary
+        const destroy = await cloudinary.uploader.destroy(image, (result) => {
+          console.log(result);
+        });
+      }
       await movieModel.deleteMovie(newId);
 
       return helperWrapper.response(response, 200, "delete success !");
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", error);
     }
   },

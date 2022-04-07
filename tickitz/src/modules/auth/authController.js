@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const helperWrapper = require("../../helpers/wrapper");
 const authModels = require("./authModels");
+const { sendMail } = require("../../helpers/mail");
+const redis = require("../../config/redis");
 
 module.exports = {
   register: async (request, response) => {
@@ -34,14 +36,21 @@ module.exports = {
       };
 
       const newResult = await authModels.register(setData);
-      return helperWrapper.response(
-        response,
-        200,
-        "Success register user",
-        newResult
-      );
+
+      const setSendEmail = {
+        to: email,
+        subject: "Email Verification !",
+        name: firstName,
+        template: "verificationEmail.html",
+        buttonUrl: "google.com",
+      };
+      const responsen = await sendMail(setSendEmail);
+
+      return helperWrapper.response(response, 200, "Success register user", {
+        newResult,
+        responsen,
+      });
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -70,18 +79,71 @@ module.exports = {
 
       // 3. PROSES JWT
       const payload = checkUser[0];
-
-      const jwtOptions = {
-        expiresIn: "24h",
-      };
       delete payload.password;
 
-      const token = jwt.sign({ ...payload }, "RAHASIA", jwtOptions);
+      // const jwtOptions = {
+      //   expiresIn: "24h",
+      // };
+
+      const token = jwt.sign({ ...payload }, "RAHASIA", { expiresIn: "1h" });
+      const refreshToken = jwt.sign({ ...payload }, "RAHASIABARU", {
+        expiresIn: "24h",
+      });
 
       return helperWrapper.response(response, 200, "Success Login", {
         id: payload.id,
         token,
+        refreshToken,
       });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  refresh: async (request, response) => {
+    try {
+      // console.log(request.body);
+      const { refreshToken } = request.body;
+      const checkToken = await redis.get(`refreshToken:${refreshToken}`);
+      if (checkToken) {
+        return helperWrapper.response(
+          response,
+          403,
+          "Your refresh Token cannot be use",
+          null
+        );
+      }
+      jwt.verify(refreshToken, "RAHASIABARU", async (error, result) => {
+        delete result.iat;
+        delete result.exp;
+        const newRefreshToken = jwt.sign(result, "RAHASIABARU", {
+          expiresIn: "24h",
+        });
+        const token = jwt.sign({ ...result }, "RAHASIA", { expiresIn: "1h" });
+        await redis.setEx(
+          `refreshToken:${refreshToken}`,
+          3600 * 48,
+          refreshToken
+        );
+        return helperWrapper.response(response, 200, "Success refresh token", {
+          id: result.id,
+          token,
+          refreshToken: newRefreshToken,
+        });
+      });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  logout: async (request, response) => {
+    try {
+      let token = request.headers.authorization;
+      const { refreshToken } = request.body;
+      token = token.split(" ")[1];
+      redis.setEx(`accessToken:${token}`, 3600 * 24, token);
+      redis.setEx(`refreshToken:${refreshToken}`, 3600 * 24, token);
+      return helperWrapper.response(response, 200, "Success logout", null);
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
