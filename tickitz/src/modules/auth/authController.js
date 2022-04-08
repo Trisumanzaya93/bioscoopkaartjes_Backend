@@ -4,6 +4,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const authModels = require("./authModels");
 const { sendMail } = require("../../helpers/mail");
 const redis = require("../../config/redis");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
   register: async (request, response) => {
@@ -27,7 +28,10 @@ module.exports = {
       //HASH PASWORD
       // Create User ke database
       passwordHash = await bcrypt.hash(password, 10);
+
+      // membuat id user unik (random) dengan uuid
       const setData = {
+        id: uuidv4(),
         firstName,
         lastName,
         email,

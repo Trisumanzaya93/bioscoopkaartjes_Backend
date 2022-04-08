@@ -47,7 +47,7 @@ const file = multer({
 // UNTUK PENGECEKAN LIMIT DAN EKSTENSI BISA DITAMBAH DI MIDDLEWARE
 // PROSES KONDISI LIMIT DAN CEK EKSTENSI FILE IN HERE
 
-const upload = multer({ file }).single("image");
+const upload = file.single("image");
 
 const handlingUpload = async (request, response, next) => {
   await upload(request, response, (error) => {
@@ -62,7 +62,7 @@ const handlingUpload = async (request, response, next) => {
         return helperWrapper.response(
           response,
           400,
-          "File Size is too large. Allowed file size is 500Kb",
+          "File Size is too large. Maximum allowed file size is 500Kb",
           null
         );
       } else {

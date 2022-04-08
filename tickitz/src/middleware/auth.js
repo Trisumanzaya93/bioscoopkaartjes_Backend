@@ -20,7 +20,6 @@ module.exports = {
       }
 
       token = token.split(" ")[1];
-      console.log(token);
 
       // proses pengecekan accessToken(token) di redis yg sudah di set
       // kalau datanya ada di Redis, makauser tidak dapat masuk (sudah logout)
@@ -45,13 +44,11 @@ module.exports = {
         next();
       });
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
   isAdmin: (request, response, next) => {
     let { role } = request.userInfo;
-    console.log(role);
 
     if (role !== "admin") {
       return helperWrapper.response(

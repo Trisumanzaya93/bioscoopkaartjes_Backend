@@ -18,28 +18,28 @@ module.exports = {
   getAllSchedule: (queryString) =>
     new Promise((resolve, reject) => {
       const query = {
-        search: queryString.searchLocation ?? "",
-        search: queryString.searchMovieId ?? "movieId",
+        // search: queryString.searchLocation ?? "location",
+        // search: queryString.searchMovieId ?? "movieId",
+        sortBy: queryString.sortBy ?? "name",
       };
       let sqlQuery =
-        "SELECT schedule.*, movie.id, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director," +
-        "movie.casts, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON schedule.movieId = movie.id";
+        "SELECT schedule.*, movie.createdAt, movie.updatedAt, movie.name, movie.category, movie.director, movie.casts, movie.releaseDate, movie.duration, movie.synopsis FROM schedule INNER JOIN movie ON schedule.movieId = movie.id ";
 
       let firstWhere = true;
       if (queryString.searchLocation) {
-        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (location like '%${
-          queryString.searchLocation
-        }%')`;
+        sqlQuery += `${
+          firstWhere ? "WHERE" : "AND"
+        } (schedule.location like '%${queryString.searchLocation}%')`;
         firstWhere = false;
       }
       if (queryString.searchMovieId) {
-        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (movieId = ${
+        sqlQuery += `${firstWhere ? "WHERE" : "AND"} (schedule.movieId = ${
           queryString.searchMovieId
         })`;
         firstWhere = false;
       }
-      if (query.sort) {
-        sqlQuery += ` ORDER BY ${queryString.sort}`;
+      if (queryString.sort && queryString.sortBy) {
+        sqlQuery += ` ORDER BY ${queryString.sortBy} ${queryString.sort}`;
       }
       sqlQuery += ` LIMIT ${queryString.limit} OFFSET ${queryString.offset}`;
 

@@ -15,9 +15,11 @@ module.exports = {
 
       const result = await scheduleModel.getAllSchedule({
         ...queryString,
+        limit,
         offset,
       });
       const totalData = await scheduleModel.getCountSchedule();
+
       const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {
         offset,

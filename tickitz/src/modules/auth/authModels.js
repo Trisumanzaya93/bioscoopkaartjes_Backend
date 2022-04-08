@@ -6,8 +6,15 @@ module.exports = {
   register: (data) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "INSERT INTO user SET firstName = ?, lastName = ?, email = ?, noTelp =?, password =? ",
-        [data.firstName, data.lastName, data.email, data.noTelp, data.password],
+        "INSERT INTO user SET id = ?, firstName = ?, lastName = ?, email = ?, noTelp =?, password =? ",
+        [
+          data.id,
+          data.firstName,
+          data.lastName,
+          data.email,
+          data.noTelp,
+          data.password,
+        ],
         (error, result) => {
           if (!error) {
             const newResult = {
