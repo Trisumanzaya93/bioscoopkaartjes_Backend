@@ -32,6 +32,10 @@ Router.get(
   bookingController.getBookingByUserId
 );
 Router.get("/:id", bookingController.getBookingByIdBooking);
+Router.post(
+  "/midtrans-notification",
+  bookingController.postMidtransNotification
+);
 // Router.delete("/:id", bookingController.deleteBooking);
 
 // Router.get("/hello", movieController.getHello);
