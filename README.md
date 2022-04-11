@@ -1,7 +1,7 @@
 # BE-TICKETING-Project
 
 <div align="center">
-	<img height="200" src="./public/upload/movie/Tickitz2.jpg" alt="Tickitz">
+	<img height="200" src="./public/upload/movie/Tickitz2.png" alt="Tickitz">
 </div>
 
 # Tickitz
