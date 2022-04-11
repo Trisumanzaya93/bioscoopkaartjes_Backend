@@ -7,11 +7,12 @@ const helmet = require("helmet");
 const xss = require("xss-clean");
 const compression = require("compression");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 // ------
 const routerNavigation = require("./routes");
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // const whitelist = ["http://127.0.0.2:5600"];
 // const corsOptions = {

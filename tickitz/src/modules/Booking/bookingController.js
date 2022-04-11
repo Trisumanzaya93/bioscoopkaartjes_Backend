@@ -26,7 +26,7 @@ module.exports = {
         totalPayment,
       };
       const result = await bookingModels.createBooking(setBooking);
-
+      console.log(result);
       seat.map(async (item) => {
         const setData = {
           bookingId: result.id,
@@ -48,6 +48,7 @@ module.exports = {
         { redirectUrl: resultMidtrans.redirect_url }
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -196,6 +197,16 @@ module.exports = {
         `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
       );
 
+      const id = orderId;
+      setData = {
+        paymentMethod: result.payment_type,
+        statusPayment: result.transaction_status,
+        updatedAt: new Date(),
+      };
+      const statusBooking = await bookingModels.updateStatusBooking(
+        id,
+        setData
+      );
       // Sample transactionStatus handling logic
 
       if (transactionStatus == "capture") {
@@ -205,11 +216,11 @@ module.exports = {
           // UBAH STATUS PEMBAYARAN MENJADI PENDING
           // PROSES MEMANGGIL MODEL untuk ubah data di dalam database
           // id = orderId;
-          setData = {
-            paymentMethod: result.payment_type,
-            statusPayment: result.transaction_status,
-            updatedAt,
-          };
+          // setData = {
+          //   paymentMethod: result.payment_type,
+          //   statusPayment: result.transaction_status,
+          //   updatedAt,
+          // };
         } else if (fraudStatus == "accept") {
           // TODO set transaction status on your databaase to 'success'
           // UBAH STATUS PEMBAYARAN JADI SUCCSES
@@ -217,17 +228,17 @@ module.exports = {
       } else if (transactionStatus == "settlement") {
         // TODO set transaction status on your databaase to 'success'
         // UBAH STATUS PEMBAYARAN JADI SUCCES
-        id = orderId;
-        (setData = {
-          paymentMethod: result.payment_type,
-          statusPayment: result.transaction_status,
-          updatedAt,
-        }),
-          console.log(
-            `Sukses melakukan pembayaran dengan id ${orderId} dan data yang diubah ${JSON.stringify(
-              setData
-            )}`
-          );
+        // id = orderId;
+        // (setData = {
+        //   paymentMethod: result.payment_type,
+        //   statusPayment: result.transaction_status,
+        //   updatedAt,
+        // }),
+        console.log(
+          `Sukses melakukan pembayaran dengan id ${orderId} dan data yang diubah ${JSON.stringify(
+            setData
+          )}`
+        );
       } else if (transactionStatus == "deny") {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
@@ -242,7 +253,14 @@ module.exports = {
         // TODO set transaction status on your databaase to 'pending' / waiting payment
         // UBAH STATUS PEMBAYARAN JADI PENDING
       }
+      return helperWrapper.response(
+        response,
+        200,
+        "Success update status booking !",
+        statusBooking
+      );
     } catch (error) {
+      console.log("error", error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

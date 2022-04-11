@@ -13,6 +13,7 @@ module.exports = {
               id: result.insertId,
               ...data,
             };
+            console.log("newresult", newResult);
             resolve(newResult);
           } else {
             reject(new Error(error.sqlMessage));
