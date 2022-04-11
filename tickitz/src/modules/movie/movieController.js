@@ -121,6 +121,7 @@ module.exports = {
         // result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -172,14 +173,11 @@ module.exports = {
         }
       }
       const imagePublicId = checkId[0].image.split(".")[0];
-      if (imagePublicId) {
+      if (request.file) {
         // Destroy gambar lama Cloudinary
-        const destroy = await cloudinary.uploader.destroy(
-          imagePublicId,
-          (result) => {
-            console.log(result);
-          }
-        );
+        await cloudinary.uploader.destroy(imagePublicId, (result) => {
+          console.log(result);
+        });
       }
       const result = await movieModel.updateMovie(id, setData);
 
@@ -209,7 +207,7 @@ module.exports = {
       const image = checkId[0].image.split(".")[0];
       if (image) {
         // Destroy gambar lama di Cloudinary
-        const destroy = await cloudinary.uploader.destroy(image, (result) => {
+        await cloudinary.uploader.destroy(image, (result) => {
           console.log(result);
         });
       }

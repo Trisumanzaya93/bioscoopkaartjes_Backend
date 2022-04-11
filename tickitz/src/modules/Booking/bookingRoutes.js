@@ -25,13 +25,13 @@ Router.patch(
   "/ticket/:id",
   middlewareAuth.authentication,
   bookingController.updateStatusBooking
-);
+); // isAdmin
 Router.get(
   "/user/:userId",
   middlewareAuth.authentication,
   bookingController.getBookingByUserId
 );
-Router.get("/:id", bookingController.getBookingByIdBooking);
+Router.get("/:id", bookingController.getBookingByIdBooking); // authentication
 Router.post(
   "/midtrans-notification",
   bookingController.postMidtransNotification

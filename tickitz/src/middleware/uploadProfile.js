@@ -51,23 +51,15 @@ const upload = multer({ file }).single("image");
 
 const handlingUpload = async (request, response, next) => {
   await upload(request, response, (error) => {
-    if (error) {
-      //instanceof multer.MulterError
+    if (error instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
-      response.status(500);
+      return helperWrapper.response(response, 401, error.message, null);
       // limit = File to large
       // extensi = bisa di customize
-      if (error.code == "LIMIT_FILE_SIZE") {
-        // An unknown error occurred when uploading.
-        return helperWrapper.response(
-          response,
-          400,
-          "File Size is too large. Allowed file size is 500Kb",
-          null
-        );
-      } else {
-        return helperWrapper.response(response, 400, "Bad Request", null);
-      }
+    }
+    if (error) {
+      // An unknown error occurred when uploading.
+      return helperWrapper.response(response, 401, error.message, null);
     }
     return next();
   });
