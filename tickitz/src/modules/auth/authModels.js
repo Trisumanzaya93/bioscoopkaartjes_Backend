@@ -6,7 +6,7 @@ module.exports = {
   register: (data) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "INSERT INTO user SET id = ?, firstName = ?, lastName = ?, email = ?, noTelp =?, password =? ",
+        "INSERT INTO user SET id = ?, firstName = ?, lastName = ?, email = ?, noTelp =?, password =?, pinActivation=? ",
         [
           data.id,
           data.firstName,
@@ -14,6 +14,7 @@ module.exports = {
           data.email,
           data.noTelp,
           data.password,
+          data.pinActivation,
         ],
         (error, result) => {
           if (!error) {
@@ -42,5 +43,17 @@ module.exports = {
           }
         }
       );
+    }),
+
+  updateStatus: (status, pinActivation) =>
+    new Promise((resolve, reject) => {
+      const querySql = "UPDATE user SET status = ? WHERE pinActivation = ? ";
+      connection.query(querySql, [status, pinActivation], (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Promise(error.sqlMessage));
+        }
+      });
     }),
 };

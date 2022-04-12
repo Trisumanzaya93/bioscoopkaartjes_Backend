@@ -10,15 +10,16 @@ module.exports = {
   getAllSchedule: async (request, response) => {
     try {
       const queryString = request.query;
-      const limit = parseInt(queryString.limit ?? 2);
-      const offset = parseInt((queryString.page ?? 1) * limit) - limit; // 1*3-3=0
+      const limit = parseInt(queryString.limit ? queryString.limit : 3);
+      const page = parseInt(queryString.page ? queryString.page : 1);
+      const offset = parseInt(page * limit) - limit; // 1*3-3=0
 
       const result = await scheduleModel.getAllSchedule({
         ...queryString,
         limit,
         offset,
       });
-      const totalData = await scheduleModel.getCountSchedule();
+      const totalData = await scheduleModel.getCountSchedule(queryString);
 
       const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {

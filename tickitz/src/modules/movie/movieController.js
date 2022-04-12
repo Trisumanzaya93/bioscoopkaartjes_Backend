@@ -5,6 +5,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModels");
 const authModels = require("../auth/authModels");
 const cloudinary = require("../../config/cloudinary");
+const { query } = require("../../config/mysql");
 
 module.exports = {
   getHello: async (request, response) => {
@@ -24,15 +25,17 @@ module.exports = {
   getAllMovie: async (request, response) => {
     try {
       const queryString = request.query;
-      const limit = parseInt(queryString.per_page ?? 3);
-      const offset = parseInt(queryString.page ?? 1 * limit) - limit; // 1*3-3=0
+      const limit = parseInt(queryString.limit ? queryString.limit : 3);
+      const page = parseInt(queryString.page ? queryString.page : 1);
+      const offset = parseInt(page * limit) - limit; // 1*3-3=0
 
       const result = await movieModel.getAllMovie({
         ...queryString,
         limit,
         offset,
       });
-      const totalData = await movieModel.getCountMovie();
+      console.log(queryString);
+      const totalData = await movieModel.getCountMovie(queryString);
 
       const totalPage = Math.ceil(totalData / limit); // membulatkan ke atas: Math.ceil()
       const pageInfo = {
@@ -54,6 +57,7 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

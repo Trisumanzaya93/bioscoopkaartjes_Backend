@@ -30,6 +30,7 @@ module.exports = {
       passwordHash = await bcrypt.hash(password, 10);
 
       // membuat id user unik (random) dengan uuid
+      const pinActivation = uuidv4();
       const setData = {
         id: uuidv4(),
         firstName,
@@ -37,6 +38,7 @@ module.exports = {
         email,
         noTelp,
         password: passwordHash,
+        pinActivation,
       };
 
       const newResult = await authModels.register(setData);
@@ -46,15 +48,21 @@ module.exports = {
         subject: "Email Verification !",
         name: firstName,
         template: "verificationEmail.html",
-        buttonUrl: "google.com",
+        buttonUrl: `http://localhost:3001/auth/updateStatus/${pinActivation}`,
       };
+      console.log(setSendEmail);
       const responsen = await sendMail(setSendEmail);
+
+      // if(buttonUrl){
+      //   const updateStatus = {status: 'active'}
+      // }
 
       return helperWrapper.response(response, 200, "Success register user", {
         newResult,
         responsen,
       });
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -149,6 +157,24 @@ module.exports = {
       redis.setEx(`refreshToken:${refreshToken}`, 3600 * 24, token);
       return helperWrapper.response(response, 200, "Success logout", null);
     } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  updateStatus: async (request, response) => {
+    try {
+      const { pinActivation } = request.params;
+      console.log(pinActivation);
+      const status = "active";
+      await authModels.updateStatus(status, pinActivation);
+      return helperWrapper.response(
+        response,
+        200,
+        "Success Activate account",
+        null
+      );
+    } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

@@ -3,18 +3,22 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-  getCountMovie: () =>
+  getCountMovie: (queryString) =>
     new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT COUNT(*) AS total FROM movie",
-        (error, result) => {
-          if (!error) {
-            resolve(result[0].total);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
+      console.log(queryString);
+      let querySql = "SELECT COUNT(*) AS total FROM movie ";
+
+      if (queryString.searchName) {
+        querySql += ` WHERE name like "%${queryString.searchName}%" `;
+      }
+      console.log(querySql);
+      connection.query(querySql, (error, result) => {
+        if (!error) {
+          resolve(result[0].total);
+        } else {
+          reject(new Error(error.sqlMessage));
         }
-      );
+      });
     }),
 
   getAllMovie: (queryString) =>
