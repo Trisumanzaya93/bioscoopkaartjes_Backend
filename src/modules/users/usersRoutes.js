@@ -10,7 +10,6 @@ const middlewareProfileImage = require("../../middleware/uploadProfile");
 Router.get(
   "/:id",
   middlewareAuth.authentication,
-  middlewareAuth.isAdmin,
   usersController.getDataUserByUserId
 );
 Router.patch(

@@ -56,7 +56,7 @@ module.exports = {
       // if(buttonUrl){
       //   const updateStatus = {status: 'active'}
       // }
-
+      console.log("responsen", responsen);
       return helperWrapper.response(response, 200, "Success register user", {
         newResult,
         responsen,
@@ -72,7 +72,7 @@ module.exports = {
       const { email, password } = request.body;
 
       const checkUser = await authModels.getUserByEmail(email);
-
+      // console.log(checkUser[0]);
       //   1. jika email tidak ada di dalam database
       if (checkUser.length < 1) {
         return helperWrapper.response(
@@ -101,11 +101,11 @@ module.exports = {
       const refreshToken = jwt.sign({ ...payload }, "RAHASIABARU", {
         expiresIn: "24h",
       });
-
       return helperWrapper.response(response, 200, "Success Login", {
         id: payload.id,
         token,
         refreshToken,
+        role: checkUser[0].role,
       });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);

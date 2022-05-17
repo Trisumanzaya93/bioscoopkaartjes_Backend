@@ -104,6 +104,7 @@ module.exports = {
         synopsis,
         image,
       } = request.body;
+      // console.log(request.file);
       const setData = {
         name,
         category,
@@ -153,7 +154,7 @@ module.exports = {
         duration,
         synopsis,
       } = request.body;
-
+      console.log("request", request.file);
       const setData = {
         name,
         category,

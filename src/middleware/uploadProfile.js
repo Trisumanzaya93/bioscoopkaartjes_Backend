@@ -47,8 +47,8 @@ const file = multer({
 // UNTUK PENGECEKAN LIMIT DAN EKSTENSI BISA DITAMBAH DI MIDDLEWARE
 // PROSES KONDISI LIMIT DAN CEK EKSTENSI FILE IN HERE
 
-const upload = multer({ file }).single("image");
-
+const upload = file.single("image");
+// multer({ file }).single("image");
 const handlingUpload = async (request, response, next) => {
   await upload(request, response, (error) => {
     if (error instanceof multer.MulterError) {

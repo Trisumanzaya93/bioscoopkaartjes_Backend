@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const fs = require("fs");
 const mustache = require("mustache");
-require("dotenv").config();
 
 const clientId = process.env.MAIL_CLIENT_ID;
 const clientSecret = process.env.MAIL_CLIENT_SECRET;
@@ -37,7 +36,6 @@ module.exports = {
       );
       //   console.log(fileTemplate);
 
-      console.log("datahelper", data);
       const mailOptions = {
         from: '"Tickitz 👻" <alakrucil@gmail.com>', // sender address
         to: data.to, // list of receivers
