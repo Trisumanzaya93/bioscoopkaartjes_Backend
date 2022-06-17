@@ -44,6 +44,11 @@ $ npm instal
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:3000/)
 
+## Publikasi
+
+Link deploy: https://bioscoopkaartjes.herokuapp.com/
+Posman Collection: https://documenter.getpostman.com/view/20137808/UzBjuU8H
+
 ## Modularisation
 
 - Public = a place to store uploaded files / files that can later be accessed publicly by users
