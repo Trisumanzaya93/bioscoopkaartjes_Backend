@@ -5,6 +5,7 @@ const authModels = require("./authModels");
 const { sendMail } = require("../../helpers/mail");
 const redis = require("../../config/redis");
 const { v4: uuidv4 } = require("uuid");
+const userModels = require("../users/usersModels");
 
 module.exports = {
   register: async (request, response) => {
@@ -48,14 +49,11 @@ module.exports = {
         subject: "Email Verification !",
         name: firstName,
         template: "verificationEmail.html",
-        buttonUrl: `http://localhost:3001/auth/updateStatus/${pinActivation}`,
+        buttonUrl: `http://localhost:3001/auth/updateStatus/${id}`,
       };
       console.log(setSendEmail);
       const responsen = await sendMail(setSendEmail);
 
-      // if(buttonUrl){
-      //   const updateStatus = {status: 'active'}
-      // }
       console.log("responsen", responsen);
       return helperWrapper.response(response, 200, "Success register user", {
         newResult,
@@ -163,10 +161,18 @@ module.exports = {
 
   updateStatus: async (request, response) => {
     try {
-      const { pinActivation } = request.params;
-      console.log(pinActivation);
-      const status = "active";
-      await authModels.updateStatus(status, pinActivation);
+      const { id } = request.params;
+      // console.log(pinActivation);
+      const checkId = await userModels.getDataUserByUserId(id);
+      if (checkId.length < 1) {
+        return helperWrapper.response(response, 404, "User not Found", null);
+      }
+
+      const setData = {
+        status: "active",
+      };
+
+      await authModels.updateStatus(setData, id);
       return helperWrapper.response(
         response,
         200,
@@ -174,7 +180,7 @@ module.exports = {
         null
       );
     } catch (error) {
-      console.log(error);
+      console.log("err1", error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

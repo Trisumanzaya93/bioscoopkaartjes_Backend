@@ -37,7 +37,7 @@ module.exports = {
 
       const setDataMidtrans = {
         id: result.id,
-        total: 100000,
+        total: totalPayment,
       };
       const resultMidtrans = await helperMidtrans.post(setDataMidtrans);
       return helperWrapper.response(
@@ -144,7 +144,7 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success Booking Seat",
+        "Success Get Dasboard checkout",
         result
       );
     } catch (error) {
@@ -203,10 +203,7 @@ module.exports = {
         statusPayment: result.transaction_status,
         updatedAt: new Date(),
       };
-      const statusBooking = await bookingModels.updateStatusBooking(
-        id,
-        setData
-      );
+
       // Sample transactionStatus handling logic
 
       if (transactionStatus == "capture") {

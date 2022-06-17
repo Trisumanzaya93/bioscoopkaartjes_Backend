@@ -45,10 +45,10 @@ module.exports = {
       );
     }),
 
-  updateStatus: (status, pinActivation) =>
+  updateStatus: (status, id) =>
     new Promise((resolve, reject) => {
-      const querySql = "UPDATE user SET status = ? WHERE pinActivation = ? ";
-      connection.query(querySql, [status, pinActivation], (error, result) => {
+      const querySql = "UPDATE user SET ? WHERE id = ?";
+      connection.query(querySql, [status, id], (error, result) => {
         if (!error) {
           resolve(result);
         } else {

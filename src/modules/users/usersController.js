@@ -17,6 +17,7 @@ module.exports = {
 
       return helperWrapper.response(response, 200, "Success get data", result);
     } catch (error) {
+      // console.log("err", error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

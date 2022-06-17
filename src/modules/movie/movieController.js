@@ -122,8 +122,8 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success create data !"
-        // result
+        "Success create data !",
+        result
       );
     } catch (error) {
       console.log(error);
