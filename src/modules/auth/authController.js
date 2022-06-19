@@ -21,8 +21,7 @@ module.exports = {
         return helperWrapper.response(
           response,
           404,
-          "Your email is registered",
-          null
+          "Your email is registered"
         );
       }
 
@@ -31,15 +30,15 @@ module.exports = {
       passwordHash = await bcrypt.hash(password, 10);
 
       // membuat id user unik (random) dengan uuid
-      const pinActivation = uuidv4();
+      const id = uuidv4();
       const setData = {
-        id: uuidv4(),
+        id,
         firstName,
         lastName,
         email,
         noTelp,
         password: passwordHash,
-        pinActivation,
+        pinActivation: uuidv4(),
       };
 
       const newResult = await authModels.register(setData);
