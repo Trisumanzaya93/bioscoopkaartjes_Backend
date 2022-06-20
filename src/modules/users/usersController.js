@@ -91,13 +91,16 @@ module.exports = {
         }
       }
 
-      // const imagePublicId = checkUser[0].image.split(".")[0];
-      // if (imagePublicId) {
-      //   // Destroy gambar lama di Cloudinary
-      //   const destroy = await cloudinary.uploader.destroy(imagePublicId, (result) => {
-      //     console.log(result);
-      //   });
-      // }
+      const imagePublicId = checkUser[0].image.split(".")[0];
+      if (imagePublicId) {
+        // Destroy gambar lama di Cloudinary
+        const destroy = await cloudinary.uploader.destroy(
+          imagePublicId,
+          (result) => {
+            console.log(result);
+          }
+        );
+      }
 
       const result = await userModels.updateImage(id, setData);
 
