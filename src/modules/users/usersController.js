@@ -3,6 +3,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const userModels = require("./usersModels");
 const authModels = require("../auth/authModels.js");
 const bcrypt = require("bcrypt");
+const cloudinary = require("../../config/cloudinary");
 const { request } = require("express");
 const { response } = require("../../helpers/wrapper");
 
@@ -76,6 +77,7 @@ module.exports = {
       }
 
       const { image } = request.body;
+      console.log(request.file);
       const setData = {
         image: request.file
           ? request.file.filename + "." + request.file.mimetype.split("/")[1]
@@ -94,12 +96,9 @@ module.exports = {
       const imagePublicId = checkUser[0].image.split(".")[0];
       if (imagePublicId) {
         // Destroy gambar lama di Cloudinary
-        const destroy = await cloudinary.uploader.destroy(
-          imagePublicId,
-          (result) => {
-            console.log(result);
-          }
-        );
+        await cloudinary.uploader.destroy(imagePublicId, (result) => {
+          console.log(result);
+        });
       }
 
       const result = await userModels.updateImage(id, setData);
