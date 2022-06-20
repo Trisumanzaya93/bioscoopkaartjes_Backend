@@ -189,7 +189,7 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success get data !",
+        "Success update movie!",
         result
       );
     } catch (error) {
