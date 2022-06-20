@@ -11,14 +11,21 @@ module.exports = {
   getDataUserByUserId: async (request, response) => {
     try {
       const { id } = request.params;
-
       const result = await userModels.getDataUserByUserId(id);
       // untuk men-delete data password dari data query yang di keluarkan
-      //   delete result.password;
+      if (result.length < 1) {
+        return helperWrapper.response(
+          response,
+          404,
+          `Data by id ${id} not found`,
+          null
+        );
+      }
 
+      delete result.password;
       return helperWrapper.response(response, 200, "Success get data", result);
     } catch (error) {
-      // console.log("err", error);
+      console.log("err", error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
