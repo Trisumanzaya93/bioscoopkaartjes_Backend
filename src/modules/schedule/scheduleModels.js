@@ -66,6 +66,20 @@ module.exports = {
         }
       );
     }),
+  getScheduleByMovieId: (movieId) =>
+    new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM schedule WHERE movieId = ?",
+        movieId,
+        (error, result) => {
+          if (!error) {
+            resolve(result);
+          } else {
+            reject(new Error(error.sqlMessage));
+          }
+        }
+      );
+    }),
   createSchedule: (data) =>
     new Promise((resolve, reject) => {
       const query = connection.query(

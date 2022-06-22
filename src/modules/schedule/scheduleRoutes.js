@@ -16,6 +16,11 @@ Router.get(
   middlewareRedis.getScheduleByIdRedis,
   scheduleController.getScheduleById
 );
+Router.get(
+  "/movie/:movieId",
+  middlewareRedis.getScheduleByIdRedis,
+  scheduleController.getScheduleByMovieId
+);
 Router.post(
   "/",
   middlewareAuth.authentication,

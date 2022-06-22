@@ -46,6 +46,34 @@ module.exports = {
     }
   },
 
+  getScheduleByMovieId: async (request, response) => {
+    try {
+      const { movieId } = request.params;
+      const result = await scheduleModel.getScheduleByMovieId(movieId);
+
+      if (result.length <= 0) {
+        return helperWrapper.response(
+          response,
+          404,
+          `Data by movieId ${movieId} not found`,
+          null
+        );
+      }
+      // PROSES UNTUK MENYIMPAN DATA KE REDIS
+      // Method JSON.stringify() untuk mengubah objek javascript menjadi string JSON
+      redis.setEx(`getSchedule: ${movieId}`, 3600, JSON.stringify(result));
+
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        result
+      );
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
   getScheduleById: async (request, response) => {
     try {
       const { id } = request.params;
