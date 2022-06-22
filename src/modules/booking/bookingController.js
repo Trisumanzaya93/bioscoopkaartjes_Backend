@@ -11,7 +11,6 @@ module.exports = {
         scheduleId,
         dateBooking,
         timeBooking,
-        paymentMethod,
         totalPayment,
         seat,
       } = request.body;
@@ -22,7 +21,6 @@ module.exports = {
         scheduleId,
         dateBooking,
         timeBooking,
-        paymentMethod,
         totalPayment,
       };
       const result = await bookingModels.createBooking(setBooking);
@@ -44,8 +42,8 @@ module.exports = {
         response,
         200,
         "Success create data !",
-        result,
-        { redirectUrl: resultMidtrans.redirect_url }
+
+        { ...result, redirectUrl: resultMidtrans.redirect_url }
       );
     } catch (error) {
       console.log(error);
