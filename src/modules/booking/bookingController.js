@@ -68,8 +68,8 @@ module.exports = {
       }
 
       return helperWrapper.response(response, 200, "Success get data !", {
-        ...result[0],
-        seat,
+        ...result,
+        seat: [seat],
       });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -166,8 +166,15 @@ module.exports = {
       }
 
       const setData = {
-        statusUsed: "notActived",
+        statusUsed: "notActive",
+        updatedAt: new Date(Date.now()),
       };
+
+      for (const data in setData) {
+        if (!setData[data]) {
+          delete setData[data];
+        }
+      }
 
       const result = await bookingModels.updateStatusBooking(id, setData);
 
