@@ -67,10 +67,16 @@ module.exports = {
         );
       }
 
-      return helperWrapper.response(response, 200, "Success get data !", {
-        ...result,
-        seat: [seat],
-      });
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        {
+          result,
+          seat,
+        },
+        null
+      );
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
