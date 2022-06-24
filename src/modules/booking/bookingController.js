@@ -71,10 +71,7 @@ module.exports = {
         response,
         200,
         "Success get data !",
-        {
-          result,
-          seat,
-        },
+        result,
         null
       );
     } catch (error) {
