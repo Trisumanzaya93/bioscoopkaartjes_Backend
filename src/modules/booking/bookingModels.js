@@ -45,10 +45,8 @@ module.exports = {
     new Promise((resolve, reject) => {
       let querySql =
         "SELECT booking.*," +
-        "bookingseat.seat, bookingseat.createdAt, bookingseat.updatedAt," +
         " movie.name, movie.category FROM `booking`" +
         "INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
-        "INNER JOIN bookingseat ON bookingseat.bookingId = booking.id " +
         "WHERE booking.userId = ? ";
 
       connection.query(querySql, [userId], (error, result) => {
@@ -95,6 +93,19 @@ module.exports = {
           }
         }
       );
+    }),
+
+  getSeatBookingByBookingId: (bookingId) =>
+    new Promise((resolve, reject) => {
+      const sqlQuery = "SELECT seat FROM `bookingseat` WHERE bookingId = ?";
+
+      connection.query(sqlQuery, [bookingId], (error, result) => {
+        if (!error) {
+          resolve(result);
+        } else {
+          reject(new Error(error.sqlMessage));
+        }
+      });
     }),
 
   getDashboardBooking: (scheduleId, movieId, location) =>

@@ -55,9 +55,13 @@ module.exports = {
     try {
       const { userId } = request.params;
       const result = await bookingModels.getBookingByUserId(userId);
-      const seat = result.map((item) => item.seat);
 
-      console.log(result);
+      for (item of result) {
+        let dataSeat = await bookingModels.getSeatBookingByBookingId(item.id);
+        dataSeat = dataSeat.map((value) => value.seat);
+        item.seat = dataSeat;
+      }
+
       if (result.length <= 0) {
         return helperWrapper.response(
           response,
@@ -75,6 +79,7 @@ module.exports = {
         null
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
