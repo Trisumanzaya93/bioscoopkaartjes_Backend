@@ -45,7 +45,7 @@ module.exports = {
     new Promise((resolve, reject) => {
       let querySql =
         "SELECT booking.*," +
-        " movie.name, movie.category FROM `booking`" +
+        "schedule.premiere, movie.name, movie.category FROM `booking`" +
         "INNER JOIN schedule ON booking.scheduleId = schedule.id INNER JOIN movie ON schedule.movieId = movie.id " +
         "WHERE booking.userId = ? ";
 
