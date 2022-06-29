@@ -7,6 +7,8 @@ const authModels = require("../auth/authModels");
 const cloudinary = require("../../config/cloudinary");
 const { query } = require("../../config/mysql");
 
+const admin = require("../../config/firebase");
+
 module.exports = {
   getHello: async (request, response) => {
     try {
@@ -118,6 +120,16 @@ module.exports = {
           : "",
       };
       const result = await movieModel.createMovie(setData);
+
+      admin.messaging().send({
+        // token:
+        //   "c4bNCJYxT0mzW2opR9SDre:APA91bE4VRY_xdVUPr_fitCqW3rvC-PcnhwRwNj-sQuu2SZFG97d7KuwPPkLu5Hfe0kBQk10oshLM9uYkjVRDpvhb2E6KAz_NPREYJsxCydpw5fmNo7nKw1QQ7IQAvFYm8SD4oWWJM6j",
+        topic: "new-movie",
+        notification: {
+          title: "New Movie",
+          body: `Movie ${name}, coming in... check now !`,
+        },
+      });
 
       return helperWrapper.response(
         response,

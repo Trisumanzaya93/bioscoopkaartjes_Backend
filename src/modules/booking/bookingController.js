@@ -24,6 +24,7 @@ module.exports = {
         totalPayment,
       };
       const result = await bookingModels.createBooking(setBooking);
+
       console.log(result);
       seat.map(async (item) => {
         const setData = {
