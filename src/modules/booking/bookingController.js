@@ -140,7 +140,7 @@ module.exports = {
 
   getDashboardBooking: async (request, response) => {
     try {
-      const { scheduleId, movieId, location } = request.query;
+      let { scheduleId, movieId, location } = request.query;
 
       const result = await bookingModels.getDashboardBooking(
         scheduleId,
@@ -151,10 +151,11 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "Success Get Dasboard checkout",
+        "Success Get Dasboard data",
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

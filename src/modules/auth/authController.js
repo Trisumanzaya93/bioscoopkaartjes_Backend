@@ -94,7 +94,7 @@ module.exports = {
       //   expiresIn: "24h",
       // };
 
-      const token = jwt.sign({ ...payload }, "RAHASIA", { expiresIn: "1h" });
+      const token = jwt.sign({ ...payload }, "RAHASIA", { expiresIn: "24h" });
       const refreshToken = jwt.sign({ ...payload }, "RAHASIABARU", {
         expiresIn: "24h",
       });
