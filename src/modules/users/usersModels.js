@@ -30,7 +30,7 @@ module.exports = {
           };
           resolve(newResult);
         } else {
-          reject(new Promise(error.sqlMessage));
+          reject(new Error(error.sqlMessage));
         }
       });
     }),
@@ -46,7 +46,7 @@ module.exports = {
           };
           resolve(newResult);
         } else {
-          reject(new Promise(error.sqlMessage));
+          reject(new Error(error.sqlMessage));
         }
       });
     }),
@@ -58,7 +58,7 @@ module.exports = {
         if (!error) {
           resolve(result);
         } else {
-          reject(error);
+          reject(new Error(error.sqlMessage));
         }
       });
     });
