@@ -1,27 +1,26 @@
 const { createClient } = require("redis");
-require("dotenv").config();
+require("dotenv").config(); // Pastikan dotenv di-load untuk environment variables
 
+// Mengambil URL Redis dari environment variable
+const redisUrl = process.env.REDIS_URL;
+
+// Membuat client Redis menggunakan URL yang sudah diambil
 const client = createClient({
-  // host: process.env.REDIS_HOST,
-  // port: process.env.REDIS_PORT,
-  // password: process.env.REDIS_PASSWORD,
-  // url: `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-  url: process.env.REDIS_URL,
+  url: redisUrl,
 });
 
-/*
 (async () => {
-  await client.connect();
-  client.on("connect", () => {
-    // eslint-disable-next-line no-console
-    console.log("You're now connected db redis ...");
-  });
+  try {
+    await client.connect(); // Koneksi ke Redis
+    console.log("You're now connected to Redis!");
+    
+    // Tes koneksi dengan set dan get data
+    await client.set('key', 'Hello, Redis!');
+    const value = await client.get('key');
+    console.log('Value from Redis:', value);  // Output: 'Hello, Redis!'
+  } catch (err) {
+    console.error('Error connecting to Redis:', err);
+  }
 })();
-*/
 
-(async () => {
-  await client.connect(); // kasih await biar tunggu selesai connect
-  console.log("You're now connected to Redis!");
-})();
-
-module.exports = client;
+module.exports = client; // Ekspor client untuk digunakan di file lain
