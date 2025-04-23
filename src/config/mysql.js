@@ -6,7 +6,11 @@ const connection = mysql.createConnection({
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
-  timezone: "utc",
+  timezone: "Z",
+  ssl: {
+    ca: process.env.DB_SSL_CA_PATH,  // Menggunakan CA certificate saja
+    rejectUnauthorized: false,
+  }
 });
 
 connection.connect((error) => {
