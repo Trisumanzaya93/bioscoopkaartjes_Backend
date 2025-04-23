@@ -9,7 +9,7 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 // ------
-const routerNavigation = require("./routes");
+const routerNavigation = require("./src/routes");
 
 const app = express();
 const port = process.env.PORT || 4000;
