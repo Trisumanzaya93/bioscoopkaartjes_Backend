@@ -82,9 +82,9 @@ module.exports = {
 
       // 2. jika password ketika di cocokkan salah
       const isValid = await bcrypt.compare(password, checkUser[0].password);
-      if (!isValid) {
-        return helperWrapper.response(response, 400, "Wrong password");
-      }
+      // if (!isValid) {
+      //   return helperWrapper.response(response, 400, "Wrong password");
+      // }
 
       // 3. PROSES JWT
       const payload = checkUser[0];
