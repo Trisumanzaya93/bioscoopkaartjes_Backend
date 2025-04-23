@@ -12,6 +12,7 @@ module.exports = {
         dateBooking,
         timeBooking,
         totalPayment,
+        paymentMethod,
         seat,
       } = request.body;
 
@@ -21,6 +22,7 @@ module.exports = {
         scheduleId,
         dateBooking,
         timeBooking,
+        paymentMethod,
         totalTicket: seat.length,
         totalPayment,
       };
