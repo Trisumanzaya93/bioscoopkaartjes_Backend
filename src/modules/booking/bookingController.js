@@ -21,6 +21,7 @@ module.exports = {
         scheduleId,
         dateBooking,
         timeBooking,
+        totalTicket: seat.length,
         totalPayment,
       };
       const result = await bookingModels.createBooking(setBooking);
